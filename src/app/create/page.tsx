@@ -6,6 +6,9 @@ import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { SetStateAction, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { v4 } from "uuid";
+
+const IMG_HOST = "https://kindohm.nyc3.digitaloceanspaces.com";
 
 const defaultTierList = {
   title: "",
@@ -24,27 +27,34 @@ const defaultTierList = {
 export default function Page() {
   const user = useUser();
   const [name, setName] = useState<string>("");
-  // const navigate = useNavigate();
+  const [paths, setPaths] = useState<string[]>([]);
+
   const router = useRouter();
 
-  const onDrop = useCallback((acceptedFiles: any[]) => {
-    acceptedFiles.forEach(async (file) => {
-      const formData = new FormData();
-      formData.append("file", file);
+  const onDrop = useCallback(async (acceptedFiles: any[]) => {
+    const newPaths = await Promise.all(
+      acceptedFiles.map(async (file) => {
+        const formData = new FormData();
+        formData.append("filename", file.name);
+        formData.append("file", file);
 
-      const resp = await fetch("/api/file", {
-        method: "POST",
-        body: formData,
-      });
+        const resp = await fetch("/api/file", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!resp.ok) {
-        console.error("something went wrong, check your console.");
-        return;
-      }
+        if (!resp.ok) {
+          console.error("something went wrong, check your console.");
+          throw new Error("error uploading file");
+        }
 
-      const data = await resp.json();
-      console.log("response", resp.status, data);
-    });
+        const data = await resp.json();
+        const path = data.result.path as string;
+        return path;
+      })
+    );
+
+    setPaths(paths.concat(newPaths));
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -57,6 +67,15 @@ export default function Page() {
     if (!user) {
       throw new Error("no user");
     }
+
+    const items = paths.map((path) => {
+      return {
+        id: v4(),
+        imageURL: path,
+        votes: [],
+      };
+    });
+
     const db = getDb();
     const tierListRef = collection(db, "tierlists");
     const doc = {
@@ -66,6 +85,7 @@ export default function Page() {
       createdAt: new Date(),
       modifiedAt: new Date(),
       users: [{ id: user.uid }],
+      items,
     };
     const result = await addDoc(tierListRef, doc);
     router.push(`/${result.path}`);
@@ -84,6 +104,16 @@ export default function Page() {
       >
         drag files here
       </div>
+      <ul style={{ display: "flex", flexWrap: "wrap" }}>
+        {paths.map((path) => {
+          const fullPath = `${IMG_HOST}/${path}`;
+          return (
+            <li key={path} style={{ listStyleType: "none" }}>
+              <img src={fullPath} width="100" height="100" />
+            </li>
+          );
+        })}
+      </ul>
       <p>
         <button onClick={create}>create</button>
       </p>
