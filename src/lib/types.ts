@@ -21,11 +21,12 @@ export type TierList = {
   title: string;
   tiers: string[];
   items: TierItem[];
-  currentVoteItemId?: string;
+  currentVoteItemId?: string | null;
   users: User[];
   createdAt: Date;
   modifiedAt: Date;
   createdBy: string;
   closed: boolean;
   inProgress: boolean;
+  itemVotingEndsAt?: Date | null;
 };

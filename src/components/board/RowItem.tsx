@@ -1,15 +1,17 @@
 import { IMG_HOST } from "@/lib/constants";
-import { TierItem } from "@/lib/types";
+import { TierItem, TierList } from "@/lib/types";
 import { useDrag } from "react-dnd";
 
 type Props = {
   item: TierItem;
+  tierList: TierList;
 };
 
-export const RowItem = ({ item }: Props) => {
+export const RowItem = ({ item, tierList }: Props) => {
   const [, drag] = useDrag(() => ({
     type: "item",
     item,
+    canDrag: tierList?.currentVoteItemId === item.id,
   }));
 
   return (

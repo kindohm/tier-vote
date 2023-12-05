@@ -6,6 +6,7 @@ import { SetStateAction, useState } from "react";
 import { useUser } from "@/lib/useUser";
 import { useTierListsByUser } from "@/lib/data";
 import { useRouter } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
 
 export default function Home() {
   const [code, setCode] = useState("");
@@ -40,15 +41,22 @@ export default function Home() {
       </p>
 
       <h3>Your Created Tier Lists</h3>
-      <ul>
-        {userTierLists?.map((l) => {
-          return (
-            <li key={l.id}>
-              <a href={`/tierlists/${l.id}`}>{l.title}</a>
-            </li>
-          );
-        })}
-      </ul>
+      <table className="table table-compact">
+        <tbody>
+          {userTierLists?.map((l) => {
+            return (
+              <tr key={l.id}>
+                <td>
+                  <a href={`/tierlists/${l.id}`}>{l.title}</a>
+                </td>
+                <td>
+                  <span>{formatDistanceToNow(l.createdAt)} ago</span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

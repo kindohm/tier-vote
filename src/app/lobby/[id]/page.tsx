@@ -4,8 +4,10 @@ import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { updateTierList } from "@/lib/data";
 import { useTierList } from "@/lib/useTierList";
 import { useUser } from "@/lib/useUser";
+import { randItem } from "@/lib/util";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { add } from "date-fns";
 
 export default function Page() {
   const params = useParams();
@@ -34,7 +36,13 @@ export default function Page() {
   }, [tierList?.inProgress]);
 
   const beginVotingClick = async () => {
-    await updateTierList(id as string, { ...tierList, inProgress: true });
+    const item = randItem(tierList.items.filter((i) => !i.tier));
+    await updateTierList(id as string, {
+      ...tierList,
+      currentVoteItemId: item.id,
+      itemVotingEndsAt: add(new Date(), { seconds: 20 }),
+      inProgress: true,
+    });
   };
 
   if (!tierList) {

@@ -41,6 +41,11 @@ export const converter = {
     return {
       ...data,
       id: snapshot.id,
+      createdAt: new Date(data?.createdAt.seconds * 1000),
+      modifiedAt: new Date(data?.modifiedAt.seconds * 1000),
+      itemVotingEndsAt: data?.itemVotingEndsAt
+        ? new Date(data?.itemVotingEndsAt.seconds * 1000)
+        : null,
     };
   },
 };
@@ -54,5 +59,7 @@ export const useTierListsByUser = (userId?: string) => {
     limit(25)
   );
   const x = useCollectionData(q);
-  return x[0] as TierList[];
+  return x[0]?.sort((a, b) =>
+    a.createdAt < b.createdAt ? 1 : -1
+  ) as TierList[];
 };

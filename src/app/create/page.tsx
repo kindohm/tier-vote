@@ -117,7 +117,9 @@ export default function Page() {
         })}
       </ul>
       <p>
-        <button onClick={create}>create</button>
+        <button className="btn btn-primary" onClick={create}>
+          create
+        </button>
       </p>
     </div>
   );

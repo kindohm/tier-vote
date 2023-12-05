@@ -6,9 +6,7 @@ export const SignIn = () => {
     try {
       const auth = getAppAuth();
       const provider = new fbAuth.GoogleAuthProvider();
-      console.log("got auth", auth);
-      const result = await fbAuth.signInWithPopup(auth, provider);
-      console.log("google result", result);
+      await fbAuth.signInWithPopup(auth, provider);
     } catch (err) {
       console.error(err);
     }
@@ -16,7 +14,9 @@ export const SignIn = () => {
 
   return (
     <>
-      <button onClick={signInGoogle}>Sign in</button>
+      <button className="btn btn-sm btn-primary" onClick={signInGoogle}>
+        Sign in
+      </button>
     </>
   );
 };
