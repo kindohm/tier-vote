@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { SetStateAction, useState } from "react";
 import { useUser } from "@/lib/useUser";
-import { getTierList, updateTierList, useTierListsByUser } from "@/lib/data";
+import { useTierListsByUser } from "@/lib/data";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -19,19 +19,7 @@ export default function Home() {
   };
 
   const goClicked = async () => {
-    if (!user) {
-      throw new Error("no user");
-    }
-    const tierList = await getTierList(code);
-    const { users } = tierList;
-    const foundUser = users.find((u) => u.id === user?.uid);
-
-    if (!foundUser) {
-      const newUsers = users.concat({ id: user?.uid });
-      await updateTierList(code, { ...tierList, users: newUsers });
-    }
-
-    router.push(`/tierlists/${code}`);
+    router.push(`/lobby/${code}`);
   };
 
   return (
@@ -40,8 +28,15 @@ export default function Home() {
 
       <p>
         Join a tier list. Enter code:{" "}
-        <input type="text" value={code} onChange={codeChanged}></input>{" "}
-        <button onClick={goClicked}>go</button>
+        <input
+          className="form-control"
+          type="text"
+          value={code}
+          onChange={codeChanged}
+        ></input>{" "}
+        <button className="btn btn-primary" onClick={goClicked}>
+          go
+        </button>
       </p>
 
       <h3>Your Created Tier Lists</h3>

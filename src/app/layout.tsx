@@ -1,15 +1,12 @@
 "use client";
 
-// import type { Metadata } from "next";
-// import { Inter } from "next/font/google";
-// import "./globals.css";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAppAuth } from "@/lib/getAppAuth";
 import { SignOut } from "@/components/SignOut";
 import { SignIn } from "@/components/SignIn";
 
-// const inter = Inter({ subsets: ["latin"] });
-
+import "bootstrap/dist/css/bootstrap.css";
+import BootstrapClient from "@/components/BootstrapClient";
 export default function RootLayout({
   children,
 }: {
@@ -19,19 +16,24 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body style={{ fontFamily: "sans-serif" }}>
-        <header>
-          <ul>
-            <li>
-              <a href="/">home</a>
-            </li>
-            <li>
-              <a href="/create">create</a>
-            </li>
-            <li>{user ? <SignOut /> : <SignIn />}</li>
-          </ul>
-        </header>
-        <main>{children}</main>
+      <body>
+        <div className="container">
+          <header>
+            <nav>
+              <ul>
+                <li>
+                  <a href="/">home</a>
+                </li>
+                <li>
+                  <a href="/create">create</a>
+                </li>
+                <li>{user ? <SignOut /> : <SignIn />}</li>
+              </ul>
+            </nav>
+          </header>
+          <main>{children}</main>
+        </div>
+        <BootstrapClient />
       </body>
     </html>
   );

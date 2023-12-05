@@ -1,37 +1,27 @@
 "use client";
 
 import { IMG_HOST } from "@/lib/constants";
-import { getTierList } from "@/lib/data";
-import { TierList } from "@/lib/types";
-import { useUser } from "@/lib/useUser";
+import { TierItem, TierList } from "@/lib/types";
+import { useTierList } from "@/lib/useTierList";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [tierList, setTierList] = useState<TierList | null>(null);
   const params = useParams();
   const { id } = params;
-  const user = useUser();
-
-  useEffect(() => {
-    const getDoc = async (docId: string) => {
-      const data = await getTierList(docId);
-
-      if (!data.users.find((u) => u.id === user?.uid)) {
-        throw new Error("You cannot view this one");
-      }
-
-      setTierList(data);
-    };
-
-    if (id && user?.uid) getDoc(id as string);
-  }, [id, user?.uid]);
+  const tierList = useTierList(id as string);
 
   return (
     <div>
       <h2>{tierList?.title}</h2>
+      {!tierList?.closed ? (
+        <p>
+          <a href={`/lobby/${tierList?.id}`} className="btn btn-primary">
+            Go to lobby
+          </a>
+        </p>
+      ) : null}
       <ul style={{ display: "flex", flexWrap: "wrap" }}>
-        {tierList?.items.map((item) => {
+        {tierList?.items.map((item: TierItem) => {
           return (
             <li key={item.id} style={{ listStyleType: "none" }}>
               <img

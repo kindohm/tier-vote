@@ -6,7 +6,7 @@ export const SignOut = () => {
 
   return (
     currentUser && (
-      <button className="sign-out" onClick={() => auth.signOut()}>
+      <button className="btn btn-secondary" onClick={() => auth.signOut()}>
         Sign Out ({currentUser.displayName})
       </button>
     )

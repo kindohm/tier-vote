@@ -12,17 +12,18 @@ import {
 import { getDb } from "./getDb";
 import { TierList } from "./types";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { COLLECTION_NAME } from "./constants";
 
-const COLLECTION_NAME = "tierlists";
-
-// consider using a converter
-// // from:
-// https://medium.com/swlh/using-firestore-with-typescript-65bd2a602945
-export const getTierList = async (id: string) => {
-  const db = getDb();
-  const snap = await getDoc(doc(db, COLLECTION_NAME, id));
-  return snap.data() as TierList;
-};
+// // consider using a converter
+// // // from:
+// // https://medium.com/swlh/using-firestore-with-typescript-65bd2a602945
+// export const getTierList = async (id: string) => {
+//   const db = getDb();
+//   const snap = await getDoc(
+//     doc(db, COLLECTION_NAME, id).withConverter(converter)
+//   );
+//   return snap.data() as TierList;
+// };
 
 export const updateTierList = async (id: string, newDoc: TierList) => {
   const db = getDb();
@@ -31,7 +32,7 @@ export const updateTierList = async (id: string, newDoc: TierList) => {
   return;
 };
 
-const converter = {
+export const converter = {
   toFirestore(post: TierList) {
     return post;
   },

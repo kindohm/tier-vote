@@ -21,6 +21,8 @@ const defaultTierList = {
   ],
   currentVoteItemId: null,
   users: [],
+  inProgress: false,
+  closed: false,
 };
 
 export default function Page() {

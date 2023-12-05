@@ -1,5 +1,6 @@
 type User = {
   id: string;
+  name: string;
 };
 
 type Vote = {
@@ -7,7 +8,7 @@ type Vote = {
   tier: string;
 };
 
-type TierItem = {
+export type TierItem = {
   id: string;
   imageURL?: string;
   votes: Vote[];
@@ -24,4 +25,6 @@ export type TierList = {
   createdAt: Date;
   modifiedAt: Date;
   createdBy: string;
+  closed: boolean;
+  inProgress: boolean;
 };
