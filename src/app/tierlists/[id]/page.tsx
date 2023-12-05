@@ -1,5 +1,6 @@
 "use client";
 
+import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { IMG_HOST } from "@/lib/constants";
 import { TierItem, TierList } from "@/lib/types";
 import { useTierList } from "@/lib/useTierList";
@@ -33,17 +34,7 @@ export default function Page() {
           );
         })}
       </ul>
-      <h4>Fancy Debug Data:</h4>
-      <pre
-        style={{
-          border: "solid 1px #ccc",
-          background: "#eee",
-          maxHeight: "200px",
-          overflow: "scroll",
-        }}
-      >
-        <code>{JSON.stringify(tierList, null, 2)}</code>
-      </pre>
+      <TierListDebugInfo tierList={tierList} />
     </div>
   );
 }

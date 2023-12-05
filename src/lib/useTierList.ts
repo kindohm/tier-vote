@@ -1,8 +1,4 @@
-import {
-  useCollectionData,
-  useCollectionDataOnce,
-  useDocument,
-} from "react-firebase-hooks/firestore";
+import { useDocument } from "react-firebase-hooks/firestore";
 import { getDb } from "./getDb";
 import { collection, doc, limit, query, where } from "firebase/firestore";
 import { COLLECTION_NAME } from "./constants";
@@ -20,7 +16,6 @@ export const useTierList = (id: string) => {
     }
   );
 
-  console.log("valueeeee", value, loading, error);
-
+  // dafuq...
   return value?.data() as unknown as TierList;
 };

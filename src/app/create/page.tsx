@@ -85,7 +85,7 @@ export default function Page() {
       createdBy: user.uid,
       createdAt: new Date(),
       modifiedAt: new Date(),
-      users: [{ id: user.uid }],
+      users: [],
       items,
     };
     const result = await addDoc(tierListRef, doc);
