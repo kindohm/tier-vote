@@ -74,6 +74,7 @@ export default function Page() {
         id: v4(),
         imageURL: path,
         votes: [],
+        modifiedAt: new Date(),
       };
     });
 

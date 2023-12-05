@@ -13,6 +13,7 @@ export type TierItem = {
   imageURL?: string;
   votes: Vote[];
   tier?: string;
+  modifiedAt: Date;
 };
 
 export type TierList = {
