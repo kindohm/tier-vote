@@ -1,5 +1,6 @@
 "use client";
 
+import { IMG_HOST } from "@/lib/constants";
 import { getDb } from "@/lib/getDb";
 import { useUser } from "@/lib/useUser";
 import { addDoc, collection } from "firebase/firestore";
@@ -7,8 +8,6 @@ import { useRouter } from "next/navigation";
 import { SetStateAction, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 } from "uuid";
-
-const IMG_HOST = "https://kindohm.nyc3.digitaloceanspaces.com";
 
 const defaultTierList = {
   title: "",
