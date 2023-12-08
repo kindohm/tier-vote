@@ -111,27 +111,29 @@ export default function Page() {
       ) : (
         <Title tierList={tierList} user={user} />
       )}
-      <p>
-        Time left... {secondsLeft}{" "}
+      <div className="mb-2 mt-2">
+        <h3>Time left: {secondsLeft} </h3>
         {isOwner ? (
-          <button
-            onClick={forceEnd}
-            className="btn btn-sm btn-secondary me-3"
-            disabled={!tierList?.currentVoteItemId}
-          >
-            force end round
-          </button>
+          <p>
+            <button
+              onClick={forceEnd}
+              className="btn btn-sm btn-secondary me-3"
+              disabled={!tierList?.currentVoteItemId}
+            >
+              force end round
+            </button>
+
+            <button
+              onClick={startNext}
+              className="btn btn-sm btn-secondary"
+              disabled={!!tierList?.currentVoteItemId || !tierList?.inProgress}
+            >
+              start next round
+            </button>
+          </p>
         ) : null}
-        {isOwner ? (
-          <button
-            onClick={startNext}
-            className="btn btn-sm btn-secondary"
-            disabled={!!tierList?.currentVoteItemId || !tierList.inProgress}
-          >
-            start next round
-          </button>
-        ) : null}
-      </p>
+      </div>
+
       <Board tierList={tierList} />
       {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>

@@ -54,9 +54,9 @@ export default function Page() {
 
   return (
     <div>
-      <h2>Lobby</h2>
+      <h1>Lobby</h1>
       <Title tierList={tierList} user={user} />
-      <div>Lobby code: {tierList?.id}</div>
+      <p className="mt-3">Lobby code: {tierList?.id}</p>
       {isCreator ? (
         <div>
           <button className="btn btn-primary" onClick={beginVotingClick}>
@@ -64,7 +64,7 @@ export default function Page() {
           </button>
         </div>
       ) : null}
-      <h4>Voters:</h4>
+      <h4 className="mt-4">Guests:</h4>
       <ul>
         {tierList?.users.map((user) => {
           return <li key={user.id}>{user.name}</li>;

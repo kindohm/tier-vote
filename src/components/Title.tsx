@@ -24,7 +24,7 @@ export const Title = ({ tierList, user }: Props) => {
   };
 
   return (
-    <h2>
+    <h1>
       {isOwner ? (
         <EasyEdit
           type="text"
@@ -37,6 +37,6 @@ export const Title = ({ tierList, user }: Props) => {
       ) : (
         <span>{tierList?.title}</span>
       )}
-    </h2>
+    </h1>
   );
 };

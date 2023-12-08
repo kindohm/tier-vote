@@ -95,11 +95,15 @@ export default function Page() {
 
   return (
     <div>
-      <h2>create</h2>
-      <p>
-        <label>name</label>
-        <input type="text" value={name} onChange={nameChanged} />
-      </p>
+      <h1>create</h1>
+      <div className="row mb-3 mt-3">
+        <div className="col-auto">
+          <label className="col-form-label">Tier list name:</label>
+        </div>
+        <div className="col-auto">
+          <input className="form-control" type="text" value={name} onChange={nameChanged} />
+        </div>
+      </div>
       <div
         {...getRootProps()}
         style={{ padding: "20px", border: "solid 3px black" }}
@@ -118,7 +122,7 @@ export default function Page() {
       </ul>
       <p>
         <button className="btn btn-primary" onClick={create}>
-          create
+          Create
         </button>
       </p>
     </div>

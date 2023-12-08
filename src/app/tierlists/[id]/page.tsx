@@ -20,17 +20,20 @@ export default function Page() {
   return (
     <div>
       <Title tierList={tierList} user={user} />
+      <div className="mt-3">
       {!tierList?.closed ? (
         <>
+        <p>This is your tier list. Feed it regularly.</p>
           <p>
             <a href={`/lobby/${tierList?.id}`} className="btn btn-primary">
-              Go to lobby
+              Ready to vote? Go to lobby
             </a>
           </p>
-          <ul style={{ display: "flex", flexWrap: "wrap" }}>
+          <p>Images:</p>
+          <ul style={{ display: "flex", flexWrap: "wrap" , padding: '0'}}>
             {tierList?.items.map((item: TierItem) => {
               return (
-                <li key={item.id} style={{ listStyleType: "none" }}>
+                <li key={item.id} style={{ listStyleType: "none", border: 'solid 1px #cccccc' }} className="me-1">
                   <img
                     src={`${IMG_HOST}/${item.imageURL}`}
                     width="100"
@@ -44,9 +47,11 @@ export default function Page() {
       ) : (
         <>
           <Board tierList={tierList} />
-          <VotingResults tierList={tierList} />
+          <div className="mt-5"><VotingResults tierList={tierList} />
+          </div>
         </>
       )}
+      </div>
 
       {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>
