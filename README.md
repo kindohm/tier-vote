@@ -1,3 +1,10 @@
+# tier-vote
+
+```
+yarn
+yarn dev
+```
+
 ### todo
 
 - upload is trash
