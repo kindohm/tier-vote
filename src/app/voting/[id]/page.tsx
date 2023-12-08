@@ -10,6 +10,7 @@ import { add, differenceInSeconds } from "date-fns";
 import { useState } from "react";
 import { updateTierList } from "@/lib/data";
 import { randItem } from "@/lib/util";
+import { Title } from "@/components/Title";
 
 export default function Page() {
   const params = useParams();
@@ -42,7 +43,6 @@ export default function Page() {
   }, 250);
 
   const forceEnd = () => {
-    console.log("forcing end");
     // tally....
     const item = tierList.items.find(
       (i) => i.id === tierList.currentVoteItemId
@@ -109,7 +109,7 @@ export default function Page() {
           this tier list is closed, redirecting...
         </div>
       ) : (
-        <p>voting... {tierList?.title}</p>
+        <Title tierList={tierList} user={user} />
       )}
       <p>
         Time left... {secondsLeft}{" "}
@@ -131,23 +131,9 @@ export default function Page() {
             start next round
           </button>
         ) : null}
-        {/* <input
-          type="number"
-          value={secondsLeft}
-          min={0}
-          max={100}
-          onChange={(e) => {
-            const x = parseInt(e.target.value);
-            setSecondsLeft(x);
-
-            if (x <= 0) {
-              forceEnd();
-            }
-          }}
-        /> */}
       </p>
       <Board tierList={tierList} />
-      <TierListDebugInfo tierList={tierList} />
+      {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>
   );
 }

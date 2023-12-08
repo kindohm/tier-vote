@@ -11,7 +11,7 @@ import { v4 } from "uuid";
 
 const defaultTierList = {
   title: "",
-  tiers: ["S", "A", "B", "C", "D", "E", "F"],
+  tiers: ["S", "A", "B", "C", "D"],
   items: [
     {
       id: "aaa",

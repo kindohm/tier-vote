@@ -8,6 +8,7 @@ import { randItem } from "@/lib/util";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { add } from "date-fns";
+import { Title } from "@/components/Title";
 
 export default function Page() {
   const params = useParams();
@@ -54,7 +55,7 @@ export default function Page() {
   return (
     <div>
       <h2>Lobby</h2>
-      <h3>{tierList?.title}</h3>
+      <Title tierList={tierList} user={user} />
       <div>Lobby code: {tierList?.id}</div>
       {isCreator ? (
         <div>
@@ -69,7 +70,7 @@ export default function Page() {
           return <li key={user.id}>{user.name}</li>;
         })}
       </ul>
-      <TierListDebugInfo tierList={tierList} />
+      {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>
   );
 }

@@ -35,7 +35,15 @@ export const Row = ({ tier, tierList }: Props) => {
                 if (v.userId === user?.uid) return newVotes;
                 return newVotes.concat(v);
               },
-              tier ? [{ userId: user?.uid, tier } as Vote] : []
+              tier
+                ? [
+                    {
+                      userId: user?.uid,
+                      tier,
+                      userName: user?.displayName,
+                    } as Vote,
+                  ]
+                : []
             );
 
             return acc.concat([{ ...i, modifiedAt: new Date(), votes }]);

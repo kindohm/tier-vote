@@ -35,6 +35,7 @@ export const RowItem = ({ item, tierList }: Props) => {
         width="75"
         height="75"
         style={style}
+        priority={true}
       />
     </span>
   );
