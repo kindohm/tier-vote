@@ -76,18 +76,14 @@ export default function Page() {
       currentVoteItemId: null,
       itemVotingEndsAt: null,
     });
+
+    setSecondsLeft(0);
   };
 
   if (tierList && !tierList?.inProgress) {
     setTimeout(() => {
       router.push(`/tierlists/${tierList.id}`);
     }, 1000);
-
-    return (
-      <div className="alert alert-warning">
-        this tier list is closed, redirecting...
-      </div>
-    );
   }
 
   const startNext = async () => {
@@ -108,7 +104,13 @@ export default function Page() {
 
   return (
     <div>
-      <p>voting... {tierList?.title}</p>
+      {tierList && !tierList?.inProgress ? (
+        <div className="alert alert-warning">
+          this tier list is closed, redirecting...
+        </div>
+      ) : (
+        <p>voting... {tierList?.title}</p>
+      )}
       <p>
         Time left... {secondsLeft}{" "}
         {isOwner ? (

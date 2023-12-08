@@ -1,5 +1,6 @@
 import { IMG_HOST } from "@/lib/constants";
 import { TierItem, TierList } from "@/lib/types";
+import Image from "next/image";
 import { useDrag } from "react-dnd";
 
 type Props = {
@@ -28,8 +29,9 @@ export const RowItem = ({ item, tierList }: Props) => {
 
   return (
     <span ref={drag} className="me-1">
-      <img
+      <Image
         src={`${IMG_HOST}/${item.imageURL}`}
+        alt="tier image"
         width="75"
         height="75"
         style={style}
