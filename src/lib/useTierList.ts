@@ -7,9 +7,11 @@ import { TierList } from "./types";
 
 export const useTierList = (id: string) => {
   const db = getDb();
+  // @ts-expect-error it is ok
   const tierListsRef = collection(db, COLLECTION_NAME).withConverter(converter);
 
   const [value, loading, error] = useDocument(
+    // @ts-expect-error it is ok
     doc(tierListsRef, id).withConverter(converter),
     {
       snapshotListenOptions: { includeMetadataChanges: false },

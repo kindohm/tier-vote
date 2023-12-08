@@ -52,6 +52,7 @@ export const converter = {
 
 export const useTierListsByUser = (userId?: string) => {
   const db = getDb();
+  // @ts-expect-error it is ok
   const messagesRef = collection(db, COLLECTION_NAME).withConverter(converter);
   const q = query(
     messagesRef,
