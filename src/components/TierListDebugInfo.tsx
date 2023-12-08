@@ -12,7 +12,6 @@ export const TierListDebugInfo = ({
         style={{
           border: "solid 1px #ccc",
           background: "#eee",
-          maxHeight: "200px",
           overflow: "scroll",
         }}
       >

@@ -3,7 +3,7 @@ type User = {
   name: string;
 };
 
-type Vote = {
+export type Vote = {
   userId: string;
   tier: string;
 };

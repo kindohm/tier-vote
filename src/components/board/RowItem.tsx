@@ -8,11 +8,25 @@ type Props = {
 };
 
 export const RowItem = ({ item, tierList }: Props) => {
-  const [, drag] = useDrag(() => ({
-    type: "item",
-    item,
-    canDrag: tierList?.currentVoteItemId === item.id,
-  }));
+  const [collected, drag, dragPreview] = useDrag(
+    () => ({
+      type: "item",
+      item,
+      canDrag: tierList?.currentVoteItemId === item.id,
+      collect: (monitor) => {
+        return {
+          result: tierList?.currentVoteItemId === item.id,
+        };
+      },
+    }),
+    [tierList, item]
+  );
+
+  // console.log("drag collected", {
+  //   itemId: item.id,
+  //   currentVoteItemId: tierList?.currentVoteItemId,
+  //   result: tierList?.currentVoteItemId === item.id,
+  // });
 
   return (
     <span ref={drag}>
