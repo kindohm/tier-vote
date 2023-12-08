@@ -22,6 +22,7 @@ export type TierList = {
   tiers: string[];
   items: TierItem[];
   currentVoteItemId?: string | null;
+  lastVoteItemId?: string | null;
   users: User[];
   createdAt: Date;
   modifiedAt: Date;

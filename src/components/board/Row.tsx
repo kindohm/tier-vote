@@ -16,7 +16,7 @@ const style = {
   marginBottom: "2px",
   padding: "1px",
   display: "flex",
-  minHeight: "75px",
+  minHeight: "78px",
 };
 
 export const Row = ({ tier, tierList }: Props) => {

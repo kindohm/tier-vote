@@ -18,16 +18,20 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="container">
-          <header>
+          <header className="mt-3">
             <nav>
-              <ul>
-                <li>
-                  <a href="/">home</a>
+              <ul className="nav">
+                <li className="nav-item">
+                  <a href="/" className="nav-link">
+                    home
+                  </a>
                 </li>
-                <li>
-                  <a href="/create">create</a>
+                <li className="nav-item">
+                  <a href="/create" className="nav-link">
+                    create
+                  </a>
                 </li>
-                <li>{user ? <SignOut /> : <SignIn />}</li>
+                <li className="nav-item">{user ? <SignOut /> : <SignIn />}</li>
               </ul>
             </nav>
           </header>

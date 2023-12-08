@@ -4,7 +4,7 @@ import { Board } from "@/components/board/Board";
 import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { useTierList } from "@/lib/useTierList";
 import { useUser } from "@/lib/useUser";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useInterval, useTimeout } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
 import { useState } from "react";
@@ -17,8 +17,29 @@ export default function Page() {
   const tierList = useTierList(id as string);
   const user = useUser();
   const [secondsLeft, setSecondsLeft] = useState(20);
-
   const isOwner = user?.uid === tierList?.createdBy;
+  const router = useRouter();
+
+  useInterval(() => {
+    if (
+      !tierList?.itemVotingEndsAt ||
+      !tierList.currentVoteItemId ||
+      secondsLeft <= 0
+    ) {
+      return;
+    }
+
+    const newSecondsLeft = differenceInSeconds(
+      tierList?.itemVotingEndsAt,
+      new Date()
+    );
+
+    setSecondsLeft(newSecondsLeft);
+
+    if (newSecondsLeft <= 0) {
+      forceEnd();
+    }
+  }, 250);
 
   const forceEnd = () => {
     console.log("forcing end");
@@ -43,18 +64,28 @@ export default function Page() {
       return { ...item, tier: totals.tier };
     });
 
+    const inProgress = !!newItems.find((i) => !i.tier);
+    const closed = !inProgress;
+
     updateTierList(id as string, {
       ...tierList,
+      inProgress,
+      closed,
       items: newItems,
+      lastVoteItemId: closed ? null : tierList.currentVoteItemId,
       currentVoteItemId: null,
       itemVotingEndsAt: null,
     });
   };
 
   if (tierList && !tierList?.inProgress) {
+    setTimeout(() => {
+      router.push(`/tierlists/${tierList.id}`);
+    }, 1000);
+
     return (
       <div className="alert alert-warning">
-        this tier list is not yet in progress
+        this tier list is closed, redirecting...
       </div>
     );
   }
@@ -62,12 +93,17 @@ export default function Page() {
   const startNext = async () => {
     const unvotedItems = tierList.items.filter((i) => !i.tier);
     const item = randItem(unvotedItems);
+    const newEndDate = add(new Date(), { seconds: 21 });
 
     updateTierList(id as string, {
       ...tierList,
       currentVoteItemId: item.id,
-      itemVotingEndsAt: add(new Date(), { seconds: 20 }),
+      itemVotingEndsAt: newEndDate,
     });
+
+    const newSecondsLeft = differenceInSeconds(newEndDate, new Date());
+
+    setSecondsLeft(newSecondsLeft);
   };
 
   return (
@@ -75,21 +111,25 @@ export default function Page() {
       <p>voting... {tierList?.title}</p>
       <p>
         Time left... {secondsLeft}{" "}
-        <button
-          onClick={forceEnd}
-          className="btn btn-sm btn-secondary"
-          disabled={!tierList?.currentVoteItemId}
-        >
-          force end round
-        </button>
-        <button
-          onClick={startNext}
-          className="btn btn-sm btn-secondary"
-          disabled={!!tierList?.currentVoteItemId}
-        >
-          start next round
-        </button>
-        <input
+        {isOwner ? (
+          <button
+            onClick={forceEnd}
+            className="btn btn-sm btn-secondary me-3"
+            disabled={!tierList?.currentVoteItemId}
+          >
+            force end round
+          </button>
+        ) : null}
+        {isOwner ? (
+          <button
+            onClick={startNext}
+            className="btn btn-sm btn-secondary"
+            disabled={!!tierList?.currentVoteItemId || !tierList.inProgress}
+          >
+            start next round
+          </button>
+        ) : null}
+        {/* <input
           type="number"
           value={secondsLeft}
           min={0}
@@ -102,7 +142,7 @@ export default function Page() {
               forceEnd();
             }
           }}
-        />
+        /> */}
       </p>
       <Board tierList={tierList} />
       <TierListDebugInfo tierList={tierList} />

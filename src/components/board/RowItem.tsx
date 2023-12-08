@@ -8,23 +8,32 @@ type Props = {
 };
 
 export const RowItem = ({ item, tierList }: Props) => {
+  const current = tierList?.currentVoteItemId === item.id;
+  const previous = tierList?.lastVoteItemId === item.id;
   const [, drag, dragPreview] = useDrag(
     () => ({
       type: "item",
       item,
-      canDrag: tierList?.currentVoteItemId === item.id,
-      collect: (monitor) => {
-        return {
-          result: tierList?.currentVoteItemId === item.id,
-        };
-      },
+      canDrag: current,
     }),
     [tierList, item]
   );
 
+  const style =
+    previous || current
+      ? {
+          border: "solid 5px orange",
+        }
+      : {};
+
   return (
-    <span ref={drag}>
-      <img src={`${IMG_HOST}/${item.imageURL}`} width="75" height="75" />
+    <span ref={drag} className="me-1">
+      <img
+        src={`${IMG_HOST}/${item.imageURL}`}
+        width="75"
+        height="75"
+        style={style}
+      />
     </span>
   );
 };

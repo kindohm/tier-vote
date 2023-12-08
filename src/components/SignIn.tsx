@@ -14,7 +14,7 @@ export const SignIn = () => {
 
   return (
     <>
-      <button className="btn btn-sm btn-primary" onClick={signInGoogle}>
+      <button className="btn btn-link" onClick={signInGoogle}>
         Sign in
       </button>
     </>
