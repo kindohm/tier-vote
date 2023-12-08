@@ -2420,11 +2420,6 @@ react-easy-edit@^1.17.2:
   resolved "https://registry.yarnpkg.com/react-easy-edit/-/react-easy-edit-1.17.2.tgz#86000c23efc47edec49825d3b2ca77ff211db5bd"
   integrity sha512-UdYch/aJGw2U6FmbhNDGqKq2JqBlgxymTALjBv92BTgjLBVrYbMjVZ5xqjhm22dmJtzAQIPot1eBR6VTZq0t5Q==
 
-react-edit-inplace@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-edit-inplace/-/react-edit-inplace-1.1.1.tgz#b4eab13c001d98d38445f11ee9f4d169b20123a5"
-  integrity sha512-V85Dkx1ViI89Vwh+5haUm7LKWcN7rVMzrELRh2bm8eyDLW/3j7BWvM06LwsRpPgd42iEnIC0Ycruh5w2hCuB8w==
-
 react-firebase-hooks@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-firebase-hooks/-/react-firebase-hooks-5.1.1.tgz#fc92bb4b860c6753c806583f64d7f069b6ee6785"
