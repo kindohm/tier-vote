@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const RowItem = ({ item, tierList }: Props) => {
-  const [collected, drag, dragPreview] = useDrag(
+  const [, drag, dragPreview] = useDrag(
     () => ({
       type: "item",
       item,
@@ -21,12 +21,6 @@ export const RowItem = ({ item, tierList }: Props) => {
     }),
     [tierList, item]
   );
-
-  // console.log("drag collected", {
-  //   itemId: item.id,
-  //   currentVoteItemId: tierList?.currentVoteItemId,
-  //   result: tierList?.currentVoteItemId === item.id,
-  // });
 
   return (
     <span ref={drag}>

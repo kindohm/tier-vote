@@ -39,8 +39,6 @@ export default function Page() {
     const item = randItem(tierList.items.filter((i) => !i.tier));
     await updateTierList(id as string, {
       ...tierList,
-      currentVoteItemId: item.id,
-      itemVotingEndsAt: add(new Date(), { seconds: 20 }),
       inProgress: true,
     });
   };

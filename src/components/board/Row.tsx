@@ -26,8 +26,8 @@ export const Row = ({ tier, tierList }: Props) => {
     () => ({
       accept: "item",
       drop: (item: TierItem) => {
-        console.log("dropped");
         // update the tierlist
+        // I am so sorry to my future self for this logic.
         const newItems = tierList.items.reduce((acc, i: TierItem) => {
           if (i.id === item.id) {
             const votes: Vote[] = i.votes.reduce(
