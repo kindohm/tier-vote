@@ -135,7 +135,7 @@ export default function Page() {
         onSubmit={handleSubmit}
         accept="image/*"
       />
-      <p>{progress ?? "&nbsp;"}</p>
+      <p>{progress ?? " "}</p>
 
       <ul style={{ display: "flex", flexWrap: "wrap" }}>
         {paths.map((path) => {
