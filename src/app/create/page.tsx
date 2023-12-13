@@ -5,9 +5,17 @@ import { getDb } from "@/lib/getDb";
 import { useUser } from "@/lib/useUser";
 import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { SetStateAction, useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { SetStateAction, useState } from "react";
 import { v4 } from "uuid";
+
+import "react-dropzone-uploader/dist/styles.css";
+import Dropzone, {
+  IFileWithMeta,
+  IUploadParams,
+} from "react-dropzone-uploader";
+import { format } from "date-fns";
+
+const S3_FOLDER = "tierlist-images";
 
 const defaultTierList = {
   title: "",
@@ -25,51 +33,33 @@ const defaultTierList = {
   closed: false,
 };
 
+const getNextPath = (filename: string) => {
+  const datePart = format(new Date(), "yyyy-MM-dd");
+  const filenameParts = filename.split(".");
+  const ext = filenameParts[filenameParts.length - 1];
+  const newFilename = `${v4()}.${ext}`;
+  const path = `${S3_FOLDER}/${datePart}/${newFilename}`;
+  return path;
+};
+
 export default function Page() {
   const user = useUser();
   const [name, setName] = useState<string>("");
   const [paths, setPaths] = useState<string[]>([]);
+  const [progress, setProgress] = useState<string | null>(null);
 
   const router = useRouter();
-
-  const onDrop = useCallback(async (acceptedFiles: any[]) => {
-    const newPaths = await Promise.all(
-      acceptedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append("filename", file.name);
-        formData.append("file", file);
-
-        const resp = await fetch("/api/file", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!resp.ok) {
-          console.error("something went wrong, check your console.");
-          throw new Error("error uploading file");
-        }
-
-        const data = await resp.json();
-        const path = data.result.path as string;
-        return path;
-      })
-    );
-
-    setPaths(paths.concat(newPaths));
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const nameChanged = (e: { target: { value: SetStateAction<string> } }) => {
     setName(e.target.value);
   };
 
-  const create = async () => {
+  const create = async (pathss: string[]) => {
     if (!user) {
       throw new Error("no user");
     }
 
-    const items = paths.map((path) => {
+    const items = pathss.map((path) => {
       return {
         id: v4(),
         imageURL: path,
@@ -93,6 +83,35 @@ export default function Page() {
     router.push(`/${result.path}`);
   };
 
+  // specify upload params and url for your files
+  const getUploadParams = (x: IFileWithMeta): IUploadParams => {
+    const { meta } = x;
+    const realPath = encodeURIComponent(getNextPath(meta.name));
+    return {
+      url: `/api/file?realPath=${realPath}`,
+      meta: { ...meta, realPath },
+    };
+  };
+
+  // @ts-expect-error
+  const handleChangeStatus = ({ meta, file }, status) => {
+    // console.log(status, meta, file);
+    setProgress(`${status} ${meta.name}`);
+  };
+
+  // receives array of files that are done uploading when submit button is clicked
+  const handleSubmit = async (
+    files: IFileWithMeta[],
+    allFiles: IFileWithMeta[]
+  ) => {
+    allFiles.forEach((f) => f.remove());
+
+    // @ts-expect-error
+    setPaths(files.map((f) => f.meta.realPath));
+    // @ts-expect-error
+    await create(files.map((f) => f.meta.realPath));
+  };
+
   return (
     <div>
       <h1>create</h1>
@@ -101,15 +120,23 @@ export default function Page() {
           <label className="col-form-label">Tier list name:</label>
         </div>
         <div className="col-auto">
-          <input className="form-control" type="text" value={name} onChange={nameChanged} />
+          <input
+            className="form-control"
+            type="text"
+            value={name}
+            onChange={nameChanged}
+          />
         </div>
       </div>
-      <div
-        {...getRootProps()}
-        style={{ padding: "20px", border: "solid 3px black" }}
-      >
-        drag files here
-      </div>
+
+      <Dropzone
+        getUploadParams={getUploadParams}
+        onChangeStatus={handleChangeStatus}
+        onSubmit={handleSubmit}
+        accept="image/*"
+      />
+      <p>{progress ?? "&nbsp;"}</p>
+
       <ul style={{ display: "flex", flexWrap: "wrap" }}>
         {paths.map((path) => {
           const fullPath = `${IMG_HOST}/${path}`;
@@ -120,11 +147,6 @@ export default function Page() {
           );
         })}
       </ul>
-      <p>
-        <button className="btn btn-primary" onClick={create}>
-          Create
-        </button>
-      </p>
     </div>
   );
 }
