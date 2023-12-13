@@ -60,7 +60,7 @@ export default function Page() {
         )}
       </div>
 
-      <TierListDebugInfo tierList={tierList} />
+      {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>
   );
 }
