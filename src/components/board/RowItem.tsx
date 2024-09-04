@@ -30,7 +30,7 @@ export const RowItem = ({ item, tierList }: Props) => {
   return (
     <span ref={drag} className="me-1">
       <Image
-        src={`${IMG_HOST}/${item.imageURL}`}
+        src={`${IMG_HOST}/${decodeURIComponent(item.imageURL ?? "")}`}
         alt="tier image"
         width="75"
         height="75"

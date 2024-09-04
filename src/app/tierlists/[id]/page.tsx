@@ -41,7 +41,9 @@ export default function Page() {
                     className="me-1"
                   >
                     <img
-                      src={`${IMG_HOST}/${item.imageURL}`}
+                      src={`${IMG_HOST}/${decodeURIComponent(
+                        item.imageURL ?? ""
+                      )}`}
                       width="100"
                       height="100"
                     />

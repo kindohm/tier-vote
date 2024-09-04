@@ -15,7 +15,7 @@ export const VotingResults = ({ tierList }: Props) => {
           return (
             <li key={item.id}>
               <Image
-                src={`${IMG_HOST}/${item.imageURL}`}
+                src={`${IMG_HOST}/${decodeURIComponent(item.imageURL ?? "")}`}
                 alt="image"
                 width="75"
                 height="75"
