@@ -14,6 +14,7 @@ import Dropzone, {
   IUploadParams,
 } from "react-dropzone-uploader";
 import { format } from "date-fns";
+import { useAdmins } from "@/lib/data";
 
 const S3_FOLDER = "tierlist-images";
 
@@ -43,7 +44,9 @@ const getNextPath = (filename: string) => {
 };
 
 export default function Page() {
+  const admins = useAdmins();
   const user = useUser();
+  const isAdmin = admins?.includes(user?.uid);
   const [name, setName] = useState<string>("");
   const [paths, setPaths] = useState<string[]>([]);
   const [progress, setProgress] = useState<string | null>(null);
@@ -111,6 +114,15 @@ export default function Page() {
     // @ts-expect-error
     await create(files.map((f) => f.meta.realPath));
   };
+
+  if (!isAdmin) {
+    return (
+      <div>
+        <h1>nope</h1>
+        <p>Sorry. Nope. Can't do this.</p>
+      </div>
+    );
+  }
 
   return (
     <div>

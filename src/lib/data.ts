@@ -64,3 +64,13 @@ export const useTierListsByUser = (userId?: string) => {
     a.createdAt < b.createdAt ? 1 : -1
   ) as TierList[];
 };
+
+export const useAdmins = () => {
+  const db = getDb();
+
+  const messagesRef = collection(db, "admins");
+  const q = query(messagesRef, limit(25));
+
+  const x = useCollectionData(q);
+  return x[0]?.map((a) => a?.userId);
+};

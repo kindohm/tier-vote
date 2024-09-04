@@ -1,9 +1,12 @@
 import { useUser } from "@/lib/useUser";
 import { SignIn } from "./SignIn";
 import { SignOut } from "./SignOut";
+import { useAdmins } from "@/lib/data";
 
 export const Nav = () => {
+  const admins = useAdmins();
   const user = useUser();
+  const isAdmin = admins?.includes(user?.uid);
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary mb-2">
@@ -29,7 +32,7 @@ export const Nav = () => {
                 Home
               </a>
             </li>
-            {user ? (
+            {isAdmin ? (
               <li className="nav-item">
                 <a href="/create" className="nav-link">
                   Create
@@ -43,5 +46,4 @@ export const Nav = () => {
       </div>
     </nav>
   );
-
 };
