@@ -8,6 +8,8 @@ import { useAdmins, useTierListsByUser } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { NotSignedIn } from "@/components/NotSignedIn";
+import { getDb } from "@/lib/getDb";
+import { collection, deleteDoc, doc } from "firebase/firestore";
 
 export default function Home() {
   const [code, setCode] = useState("");
@@ -23,6 +25,13 @@ export default function Home() {
 
   const goClicked = async () => {
     router.push(`/lobby/${code}`);
+  };
+
+  const handleDelete = async (id: string) => {
+    const db = getDb();
+    const tierListRef = collection(db, "tierlists");
+    const document = doc(tierListRef, id);
+    deleteDoc(document);
   };
 
   return (
@@ -66,6 +75,14 @@ export default function Home() {
                         </td>
                         <td>
                           <span>{formatDistanceToNow(l.createdAt)} ago</span>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleDelete(l.id)}
+                          >
+                            delete
+                          </button>
                         </td>
                       </tr>
                     );
