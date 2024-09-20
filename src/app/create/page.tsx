@@ -147,7 +147,7 @@ export default function Page() {
         onSubmit={handleSubmit}
         accept="image/*"
         maxSizeBytes={1024 * 1024 * 3} // 3MB
-        maxFiles={50}
+        maxFiles={100}
         submitButtonDisabled={!name}
       />
       <p>{progress ?? " "}</p>
