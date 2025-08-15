@@ -125,7 +125,7 @@ export const RowItem = ({ item, tierList }: Props) => {
     <span ref={drag} className="me-1" style={draggableStyles}>
       {loading ? (
         <span
-          className="skeleton"
+          className="skeleton skeleton-img"
           style={{ width: 75, height: 75, display: "inline-block" }}
         />
       ) : (

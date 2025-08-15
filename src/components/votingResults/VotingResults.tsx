@@ -2,7 +2,7 @@ import { IMG_HOST } from "@/lib/constants";
 import { TierList } from "@/lib/types";
 import { useAllVotesForList, VoteDoc } from "../../lib/useVotes";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 
 // Helper to color-code tiers (tweak as desired)
 const tierColor = (tier: string) => {
@@ -64,6 +64,10 @@ type Props = {
 export const VotingResults = ({ tierList }: Props) => {
   const allVotes = useAllVotesForList(tierList.id);
   const [view, setView] = useState<"matrix" | "tiers">("matrix");
+  const [expandedVoteKey, setExpandedVoteKey] = useState<string | null>(null);
+  const toggleExpanded = useCallback((key: string) => {
+    setExpandedVoteKey((prev) => (prev === key ? null : key));
+  }, []);
   // Only show results after at least one item has a finalized tier assignment.
   const hasPlacedItem = tierList.items.some((i) => !!i.tier);
 
@@ -177,19 +181,19 @@ export const VotingResults = ({ tierList }: Props) => {
                     <tr key={`sk-${i}`}>
                       <td>
                         <span
-                          className="skeleton"
+                          className="skeleton skeleton-img"
                           style={{ width: 64, height: 64, display: "block" }}
                         />
                       </td>
                       <td>
                         <span
-                          className="skeleton"
+                          className="skeleton skeleton-table"
                           style={{ width: 32, height: 20, display: "block" }}
                         />
                       </td>
                       <td>
                         <span
-                          className="skeleton"
+                          className="skeleton skeleton-table"
                           style={{ width: 140, height: 14, display: "block" }}
                         />
                       </td>
@@ -198,7 +202,7 @@ export const VotingResults = ({ tierList }: Props) => {
                           {Array.from({ length: 3 }).map((__, j) => (
                             <span
                               key={j}
-                              className="skeleton"
+                              className="skeleton skeleton-table"
                               style={{ width: 34, height: 38 }}
                             />
                           ))}
@@ -243,36 +247,129 @@ export const VotingResults = ({ tierList }: Props) => {
                             .join("")
                             .slice(0, 2)
                             .toUpperCase();
+                          const key = `${item.id}__${v.userId}`;
+                          const expanded = expandedVoteKey === key;
+                          let ts: string | undefined;
+                          const raw = (v as any).createdAt;
+                          try {
+                            if (raw && typeof raw.toDate === "function") {
+                              const d: Date = raw.toDate();
+                              const now = new Date();
+                              const sameDay =
+                                d.getFullYear() === now.getFullYear() &&
+                                d.getMonth() === now.getMonth() &&
+                                d.getDate() === now.getDate();
+                              ts = sameDay
+                                ? d.toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })
+                                : d.toLocaleString([], {
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  });
+                            }
+                          } catch (_) {
+                            // ignore formatting issues
+                          }
                           return (
                             <span
                               key={v.userId}
                               title={`${name}: ${v.tier}`}
-                              className={`badge ${tierColor(
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => toggleExpanded(key)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  toggleExpanded(key);
+                                }
+                              }}
+                              onMouseEnter={() => setExpandedVoteKey(key)}
+                              onMouseLeave={() =>
+                                setExpandedVoteKey((prev) =>
+                                  prev === key ? null : prev
+                                )
+                              }
+                              className={`vote-badge badge ${tierColor(
                                 v.tier
-                              )} d-inline-flex flex-column align-items-center justify-content-center`}
+                              )} d-inline-flex flex-column justify-content-center ${
+                                expanded ? "expanded" : "align-items-center"
+                              }`}
                               style={{
                                 minWidth: 34,
-                                height: 38,
+                                height: expanded ? "auto" : 38,
                                 lineHeight: 1.1,
                                 letterSpacing: 0.5,
-                                padding: "2px 4px",
+                                padding: expanded ? "4px 6px" : "2px 4px",
+                                cursor: "pointer",
+                                position: "relative",
+                                transition: "all .18s ease",
+                                whiteSpace: expanded ? "normal" : "nowrap",
+                                textAlign: expanded ? "left" : "center",
                               }}
                             >
-                              <span style={{ fontSize: 13, fontWeight: 600 }}>
-                                {v.tier}
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: 9,
-                                  fontWeight: 400,
-                                  opacity: 0.85,
-                                  marginTop: -2,
-                                  textTransform: "uppercase",
-                                }}
-                              >
-                                {initials}
-                              </span>
-                              <span className="visually-hidden"> {name}</span>
+                              {!expanded && (
+                                <>
+                                  <span
+                                    style={{ fontSize: 13, fontWeight: 600 }}
+                                  >
+                                    {v.tier}
+                                  </span>
+                                  <span
+                                    style={{
+                                      fontSize: 9,
+                                      fontWeight: 400,
+                                      opacity: 0.85,
+                                      marginTop: -2,
+                                      textTransform: "uppercase",
+                                    }}
+                                  >
+                                    {initials}
+                                  </span>
+                                  <span className="visually-hidden">
+                                    {" "}
+                                    {name}
+                                  </span>
+                                </>
+                              )}
+                              {expanded && (
+                                <div
+                                  className="d-flex flex-column gap-1"
+                                  style={{ lineHeight: 1.05 }}
+                                >
+                                  <div className="d-flex align-items-center gap-1 flex-wrap">
+                                    <span
+                                      style={{
+                                        fontSize: 13,
+                                        fontWeight: 700,
+                                      }}
+                                    >
+                                      {v.tier}
+                                    </span>
+                                    <span
+                                      style={{
+                                        fontSize: 11,
+                                        fontWeight: 500,
+                                        textTransform: "none",
+                                      }}
+                                    >
+                                      {name}
+                                    </span>
+                                  </div>
+                                  <span
+                                    style={{
+                                      fontSize: 10,
+                                      opacity: 0.85,
+                                      fontWeight: 400,
+                                    }}
+                                  >
+                                    {ts || "—"}
+                                  </span>
+                                </div>
+                              )}
                             </span>
                           );
                         })}
@@ -284,7 +381,7 @@ export const VotingResults = ({ tierList }: Props) => {
             </tbody>
           </table>
           <p className="text-muted small mb-0">
-            Votes column shows tier badges (sorted). Hover for voter name.
+            Hover or tap a vote badge to expand for full voter name & timestamp.
             Distribution bar shows spread across tiers.
           </p>
         </div>
