@@ -17,18 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Tier List Thing</title>
+        <title>Tier Vote</title>
       </head>
       <body>
         <div className="container">
           <header className="mt-3">
-           <Nav />
+            <Nav />
           </header>
           <main>{children}</main>
           <Footer />
         </div>
         <BootstrapClient />
-        
       </body>
     </html>
   );

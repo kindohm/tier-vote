@@ -12,7 +12,7 @@ export const Nav = () => {
     <nav className="navbar navbar-expand-lg bg-body-tertiary mb-2">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          Tier List Thing
+          Tier Vote
         </a>
         <button
           className="navbar-toggler"

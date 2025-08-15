@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Amazing Tier List Thing</h1>
+      <h1>Tier Vote</h1>
 
       {user ? (
         <>
