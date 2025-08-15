@@ -29,6 +29,8 @@ const defaultTierList = {
     { id: "bbb", votes: [] },
   ],
   currentVoteItemId: null,
+  pendingVoteItemId: null,
+  pendingVoteStartsAt: null,
   users: [],
   inProgress: false,
   closed: false,

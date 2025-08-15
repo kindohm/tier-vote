@@ -46,6 +46,9 @@ export const converter = {
       itemVotingEndsAt: data?.itemVotingEndsAt
         ? new Date(data?.itemVotingEndsAt.seconds * 1000)
         : null,
+      pendingVoteStartsAt: data?.pendingVoteStartsAt
+        ? new Date(data?.pendingVoteStartsAt.seconds * 1000)
+        : null,
     };
   },
 };

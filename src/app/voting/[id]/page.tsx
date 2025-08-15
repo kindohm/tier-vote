@@ -18,10 +18,44 @@ export default function Page() {
   const tierList = useTierList(id as string);
   const user = useUser();
   const [secondsLeft, setSecondsLeft] = useState(20);
+  const [secondsUntilStart, setSecondsUntilStart] = useState<number | null>(
+    null
+  );
   const isOwner = user?.uid === tierList?.createdBy;
   const router = useRouter();
 
   useInterval(() => {
+    // Pending (pre-round) countdown logic
+    if (
+      tierList?.pendingVoteItemId &&
+      tierList.pendingVoteStartsAt &&
+      !tierList.currentVoteItemId
+    ) {
+      const until = differenceInSeconds(
+        tierList.pendingVoteStartsAt,
+        new Date()
+      );
+      setSecondsUntilStart(until >= 0 ? until : 0);
+      if (until <= 0) {
+        // Promote pending to active round. (Multiple clients may attempt; last write wins.)
+        const newEndDate = add(new Date(), { seconds: 21 });
+        updateTierList(id as string, {
+          ...tierList,
+          currentVoteItemId: tierList.pendingVoteItemId,
+          itemVotingEndsAt: newEndDate,
+          pendingVoteItemId: null,
+          pendingVoteStartsAt: null,
+        });
+        const left = differenceInSeconds(newEndDate, new Date());
+        setSecondsLeft(left);
+        setSecondsUntilStart(null);
+        return; // skip active logic this tick
+      }
+    } else if (!tierList?.pendingVoteItemId) {
+      setSecondsUntilStart(null);
+    }
+
+    // Active round countdown
     if (
       !tierList?.itemVotingEndsAt ||
       !tierList.currentVoteItemId ||
@@ -89,17 +123,13 @@ export default function Page() {
   const startNext = async () => {
     const unvotedItems = tierList.items.filter((i) => !i.tier);
     const item = randItem(unvotedItems);
-    const newEndDate = add(new Date(), { seconds: 21 });
+    const countdownEnd = add(new Date(), { seconds: 6 });
 
     updateTierList(id as string, {
       ...tierList,
-      currentVoteItemId: item.id,
-      itemVotingEndsAt: newEndDate,
+      pendingVoteItemId: item.id,
+      pendingVoteStartsAt: countdownEnd,
     });
-
-    const newSecondsLeft = differenceInSeconds(newEndDate, new Date());
-
-    setSecondsLeft(newSecondsLeft);
   };
 
   return (
@@ -112,11 +142,15 @@ export default function Page() {
         <Title tierList={tierList} user={user} />
       )}
       <div className="mb-2 mt-2">
+        {tierList?.pendingVoteItemId && secondsUntilStart !== null ? (
+          <p>Starting in: {secondsUntilStart}</p>
+        ) : null}
         {tierList?.currentVoteItemId ? (
-          <p>Time left: {secondsLeft}</p>
-        ) : (
-          <p>Waiting for admin to start the round.</p>
-        )}
+          <p>Time left to vote: {secondsLeft}</p>
+        ) : null}
+        {!tierList?.pendingVoteItemId && !tierList?.currentVoteItemId ? (
+          <p>Waiting for admin to start the next round.</p>
+        ) : null}
         {isOwner ? (
           <p>
             <button
@@ -130,7 +164,11 @@ export default function Page() {
             <button
               onClick={startNext}
               className="btn btn-sm btn-secondary"
-              disabled={!!tierList?.currentVoteItemId || !tierList?.inProgress}
+              disabled={
+                !!tierList?.currentVoteItemId ||
+                !!tierList?.pendingVoteItemId ||
+                !tierList?.inProgress
+              }
             >
               start next round
             </button>

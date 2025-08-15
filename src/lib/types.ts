@@ -24,6 +24,9 @@ export type TierList = {
   items: TierItem[];
   currentVoteItemId?: string | null;
   lastVoteItemId?: string | null;
+  // Fields for a pending (pre-round) countdown before activating currentVoteItemId
+  pendingVoteItemId?: string | null;
+  pendingVoteStartsAt?: Date | null; // timestamp when countdown ends and round begins
   users: User[];
   createdAt: Date;
   modifiedAt: Date;
