@@ -1,5 +1,5 @@
-import { SignIn } from "./SignIn"
+import { SignIn } from "./SignIn";
 
 export const NotSignedIn = () => {
-  return <p>You are not signed in. You should <SignIn /></p>
-}
+  return <p>Sign in with Google to do stuff.</p>;
+};
