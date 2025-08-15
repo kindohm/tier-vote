@@ -7,10 +7,11 @@ import { useUser } from "@/lib/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { useInterval, useTimeout } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data";
 import { randItem } from "@/lib/util";
 import { Title } from "@/components/Title";
+import { VoteToasts, VoteToast } from "@/components/VoteToasts";
 
 export default function Page() {
   const params = useParams();
@@ -23,6 +24,47 @@ export default function Page() {
   );
   const isOwner = user?.uid === tierList?.createdBy;
   const router = useRouter();
+  // Toast state for newly cast votes
+  const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
+  const voteIdsRef = useRef<Set<string>>(new Set());
+
+  // Reset tracking when a new round begins
+  useEffect(() => {
+    if (!tierList?.currentVoteItemId) {
+      voteIdsRef.current = new Set();
+      return;
+    }
+    const currentItem = tierList.items.find(
+      (i) => i.id === tierList.currentVoteItemId
+    );
+    const existing = new Set(
+      (currentItem?.votes || []).map((v) => v.userId).filter(Boolean)
+    );
+    voteIdsRef.current = existing; // initialize with existing so we only toast truly new votes
+  }, [tierList?.currentVoteItemId]);
+
+  // Detect new votes for the active item and create toasts
+  useEffect(() => {
+    if (!tierList?.currentVoteItemId) return;
+    const currentItem = tierList.items.find(
+      (i) => i.id === tierList.currentVoteItemId
+    );
+    if (!currentItem) return;
+    const currentVotes = currentItem.votes || [];
+    for (const v of currentVotes) {
+      if (!voteIdsRef.current.has(v.userId)) {
+        voteIdsRef.current.add(v.userId);
+        const id = `${v.userId}-${Date.now()}`;
+        const message = `${v.userName || "Someone"} voted${
+          v.tier ? ` ${v.tier}` : ""
+        }`;
+        setVoteToasts((prev) => prev.concat({ id, message }));
+        setTimeout(() => {
+          setVoteToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 2000);
+      }
+    }
+  }, [tierList?.items, tierList?.currentVoteItemId]);
 
   useInterval(() => {
     // Pending (pre-round) countdown logic
@@ -218,6 +260,8 @@ export default function Page() {
       ) : null}
 
       <Board tierList={tierList} />
+      {/* Vote Toasts */}
+      <VoteToasts toasts={voteToasts} />
       {/* <TierListDebugInfo tierList={tierList} /> */}
     </div>
   );
