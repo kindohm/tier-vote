@@ -16,6 +16,7 @@ import { CountdownOverlay } from "@/components/CountdownOverlay";
 // Progress bar extracted component (relative import fallback)
 import { RoundProgressBar } from "../../../components/RoundProgressBar";
 import { VoteToasts, VoteToast } from "@/components/VoteToasts";
+import { VotingResults } from "@/components/votingResults/VotingResults";
 
 export default function Page() {
   const params = useParams();
@@ -268,6 +269,11 @@ export default function Page() {
           <CountdownOverlay seconds={secondsUntilStart} />
         )}
       </div>
+      {tierList && (
+        <div className="mt-4">
+          <VotingResults tierList={tierList} />
+        </div>
+      )}
       {/* Vote Toasts */}
       <VoteToasts toasts={voteToasts} />
       {/* <TierListDebugInfo tierList={tierList} /> */}

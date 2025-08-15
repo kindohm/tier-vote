@@ -96,6 +96,26 @@ export const VotingResults = ({ tierList }: Props) => {
     [tierList.items, tierList.tiers, itemVoteMap, users.length]
   );
 
+  // Sort rows for matrix view: S, A, B, C, D, then unplaced items last.
+  const sortedWithStats = useMemo(() => {
+    const order = ["S", "A", "B", "C", "D"]; // explicit priority
+    const rank = (tier?: string | null) => {
+      if (!tier) return 999; // unplaced last
+      const idx = order.indexOf(tier);
+      return idx === -1 ? 500 : idx; // unknown tiers after known but before unplaced
+    };
+    return [...withStats].sort((a, b) => {
+      const ra = rank(a.item.tier);
+      const rb = rank(b.item.tier);
+      if (ra !== rb) return ra - rb;
+      // Stable fallback: keep original relative order for same tier by index in items
+      return (
+        tierList.items.findIndex((i) => i.id === a.item.id) -
+        tierList.items.findIndex((i) => i.id === b.item.id)
+      );
+    });
+  }, [withStats, tierList.items]);
+
   const groupedByTier = useMemo(() => {
     const grp: Record<string, typeof withStats> = {};
     withStats.forEach((row) => {
@@ -142,7 +162,7 @@ export const VotingResults = ({ tierList }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {withStats.map(({ item, votes, dist }) => {
+              {sortedWithStats.map(({ item, votes, dist }) => {
                 const sortedVotes = [...votes].sort((a, b) =>
                   a.tier.localeCompare(b.tier)
                 );
