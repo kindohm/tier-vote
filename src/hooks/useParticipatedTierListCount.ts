@@ -14,12 +14,15 @@ import { converter } from "@/lib/data";
 // Returns array of TierLists the user has votes in (distinct, newest first)
 export function useParticipatedTierLists(userId?: string) {
   const [lists, setLists] = useState<TierList[]>([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!userId) {
       setLists([]);
+      setLoading(false);
       return;
     }
     let cancelled = false;
+    setLoading(true);
     (async () => {
       try {
         const db = getDb();
@@ -49,14 +52,18 @@ export function useParticipatedTierLists(userId?: string) {
           }
         }
         fetched.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-        if (!cancelled) setLists(fetched);
+        if (!cancelled) {
+          setLists(fetched);
+          setLoading(false);
+        }
       } catch (e) {
         console.error("participatedTierLists error", e);
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
       cancelled = true;
     };
   }, [userId]);
-  return lists;
+  return [lists, loading] as const;
 }

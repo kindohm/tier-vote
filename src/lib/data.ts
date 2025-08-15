@@ -62,10 +62,11 @@ export const useTierListsByUser = (userId?: string) => {
     where("createdBy", "==", userId ?? ""),
     limit(25)
   );
-  const x = useCollectionData(q);
-  return x[0]?.sort((a, b) =>
+  const [data, loading] = useCollectionData(q);
+  const sorted = (data as TierList[] | undefined)?.sort((a, b) =>
     a.createdAt < b.createdAt ? 1 : -1
-  ) as TierList[];
+  );
+  return [sorted, loading] as const;
 };
 
 export const useAdmins = () => {

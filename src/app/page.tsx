@@ -19,8 +19,10 @@ export default function Home() {
   const adminsInfo = useAdminsInfo();
   const user = useUser();
   const isAdmin = admins?.includes(user?.uid);
-  const userTierLists = useTierListsByUser(user?.uid);
-  const participatedLists = useParticipatedTierLists(user?.uid);
+  const [userTierLists, userTierListsLoading] = useTierListsByUser(user?.uid);
+  const [participatedLists, participatedLoading] = useParticipatedTierLists(
+    user?.uid
+  );
 
   const codeChanged = (e: { target: { value: SetStateAction<string> } }) => {
     setCode(e.target.value);
@@ -68,38 +70,52 @@ export default function Home() {
           <div className="row mb-4">
             <div className={isAdmin ? "col-lg-7" : "col-12"}>
               <h3>Tier Lists You Participated In</h3>
-              <table className="table table-compact">
-                <tbody>
-                  {participatedLists.map((l) => (
-                    <tr key={l.id}>
-                      <td>
-                        <a href={`/tierlists/${l.id}`}>{l.title}</a>
-                      </td>
-                      <td>
-                        <span>{formatDistanceToNow(l.createdAt)} ago</span>
-                      </td>
-                      <td>
-                        {l.closed ? (
-                          <span className="badge bg-success">closed</span>
-                        ) : l.inProgress ? (
-                          <span className="badge bg-info text-dark">
-                            in progress
-                          </span>
-                        ) : (
-                          <span className="badge bg-secondary">pending</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  {participatedLists.length === 0 && (
-                    <tr>
-                      <td colSpan={3} className="text-muted">
-                        No participation yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              {participatedLoading ? (
+                <div
+                  className="d-flex align-items-center gap-2 text-muted small"
+                  style={{ minHeight: 48 }}
+                >
+                  <div
+                    className="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                    aria-label="Loading participated tier lists"
+                  ></div>
+                  Loading...
+                </div>
+              ) : (
+                <table className="table table-compact">
+                  <tbody>
+                    {participatedLists.map((l) => (
+                      <tr key={l.id}>
+                        <td>
+                          <a href={`/tierlists/${l.id}`}>{l.title}</a>
+                        </td>
+                        <td>
+                          <span>{formatDistanceToNow(l.createdAt)} ago</span>
+                        </td>
+                        <td>
+                          {l.closed ? (
+                            <span className="badge bg-success">closed</span>
+                          ) : l.inProgress ? (
+                            <span className="badge bg-info text-dark">
+                              in progress
+                            </span>
+                          ) : (
+                            <span className="badge bg-secondary">pending</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {participatedLists.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="text-muted">
+                          No participation yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
             {isAdmin && (
               <div className="col-lg-5 mt-4 mt-lg-0">
@@ -116,35 +132,49 @@ export default function Home() {
                   </div>
                 )}
                 <h3>Your Created Tier Lists</h3>
-                <table className="table table-compact">
-                  <tbody>
-                    {userTierLists?.map((l) => (
-                      <tr key={l.id}>
-                        <td>
-                          <a href={`/tierlists/${l.id}`}>{l.title}</a>
-                        </td>
-                        <td>
-                          <span>{formatDistanceToNow(l.createdAt)} ago</span>
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDelete(l.id)}
-                          >
-                            delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                    {(!userTierLists || userTierLists.length === 0) && (
-                      <tr>
-                        <td colSpan={3} className="text-muted">
-                          You haven't created any tier lists yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                {userTierListsLoading ? (
+                  <div
+                    className="d-flex align-items-center gap-2 text-muted small"
+                    style={{ minHeight: 48 }}
+                  >
+                    <div
+                      className="spinner-border spinner-border-sm text-secondary"
+                      role="status"
+                      aria-label="Loading your tier lists"
+                    ></div>
+                    Loading...
+                  </div>
+                ) : (
+                  <table className="table table-compact">
+                    <tbody>
+                      {userTierLists?.map((l) => (
+                        <tr key={l.id}>
+                          <td>
+                            <a href={`/tierlists/${l.id}`}>{l.title}</a>
+                          </td>
+                          <td>
+                            <span>{formatDistanceToNow(l.createdAt)} ago</span>
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleDelete(l.id)}
+                            >
+                              delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {(!userTierLists || userTierLists.length === 0) && (
+                        <tr>
+                          <td colSpan={3} className="text-muted">
+                            You haven't created any tier lists yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             )}
           </div>
