@@ -16,6 +16,7 @@ import { CountdownOverlay } from "@/components/CountdownOverlay";
 // Progress bar extracted component (relative import fallback)
 import { RoundProgressBar } from "../../../components/RoundProgressBar";
 import { VoteToasts, VoteToast } from "@/components/VoteToasts";
+import { WaitingStatus } from "@/components/WaitingStatus";
 import { VotingResults } from "@/components/votingResults/VotingResults";
 
 export default function Page() {
@@ -189,46 +190,18 @@ export default function Page() {
       )}
       <div className="mb-2 mt-2">
         {/* Removed inline countdown text; now using overlay */}
-        {tierList?.currentVoteItemId
-          ? (() => {
-              // Distinct participant IDs
-              const participantIds = Array.from(
-                new Set(tierList.users.map((u) => u.id).filter(Boolean))
-              );
-              // Distinct voters for current item
-              const voterIds = new Set(
-                votesForCurrentItem.map((v: any) => v.userId).filter(Boolean)
-              );
-              const waitingCount = participantIds.filter(
-                (id) => !voterIds.has(id)
-              ).length;
-              const missingIds = participantIds.filter(
-                (id) => !voterIds.has(id)
-              );
-              const loneUserName =
-                waitingCount === 1
-                  ? tierList.users.find((u) => u.id === missingIds[0])?.name ||
-                    "someone"
-                  : null;
-              return (
-                <div className="mb-2">
-                  <RoundProgressBar
-                    secondsLeft={secondsLeft}
-                    totalSeconds={roundTotalSeconds}
-                  />
-                  {waitingCount > 0 ? (
-                    <p className="text-muted small mb-0">
-                      {waitingCount === 1
-                        ? `waiting on ${loneUserName} to vote...`
-                        : `waiting for ${waitingCount} people to vote...`}
-                    </p>
-                  ) : (
-                    <p className="text-success small mb-0">all votes in</p>
-                  )}
-                </div>
-              );
-            })()
-          : null}
+        {tierList?.currentVoteItemId && (
+          <div className="mb-2">
+            <RoundProgressBar
+              secondsLeft={secondsLeft}
+              totalSeconds={roundTotalSeconds}
+            />
+            <WaitingStatus
+              tierList={tierList}
+              votesForCurrentItem={votesForCurrentItem}
+            />
+          </div>
+        )}
         {!tierList?.pendingVoteItemId && !tierList?.currentVoteItemId ? (
           <p>Waiting for admin to start the next round.</p>
         ) : null}
