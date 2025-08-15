@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Favicon version of LogoTierList: simplified for small sizes -->
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#222" />
+      <stop offset="100%" stop-color="#111" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="64" height="64" rx="8" fill="url(#bg)" stroke="#000" stroke-width="2" />
+  <!-- Tier rows (S-A-B-C-D) -->
+  <!-- We'll use 5 rows to keep things legible at 16px; letters are optional but retained -->
+  <g font-family="system-ui, sans-serif" font-weight="700" text-anchor="middle" font-size="10" fill="#000">
+    <!-- Row metrics -->
+    <!-- Each row height: 11, gap 1 -->
+    <g transform="translate(4,4)">
+      <!-- Row generator (manually expanded) -->
+      <!-- S Row -->
+      <rect x="0" y="0" width="14" height="11" rx="2" fill="#dc3545" />
+      <text x="7" y="8" fill="#fff">S</text>
+      <!-- Empty cells -->
+      <rect x="16" y="2" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="27" y="2" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="38" y="2" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+
+      <!-- A Row -->
+      <rect x="0" y="12" width="14" height="11" rx="2" fill="#ffc107" />
+      <text x="7" y="20" fill="#000">A</text>
+      <rect x="16" y="14" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="27" y="14" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="38" y="14" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+
+      <!-- B Row -->
+      <rect x="0" y="24" width="14" height="11" rx="2" fill="#198754" />
+      <text x="7" y="32" fill="#fff">B</text>
+      <rect x="16" y="26" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="27" y="26" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="38" y="26" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+
+      <!-- C Row -->
+      <rect x="0" y="36" width="14" height="11" rx="2" fill="#0d6efd" />
+      <text x="7" y="44" fill="#fff">C</text>
+      <rect x="16" y="38" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="27" y="38" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="38" y="38" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+
+      <!-- D Row -->
+      <rect x="0" y="48" width="14" height="11" rx="2" fill="#6c757d" />
+      <text x="7" y="56" fill="#fff">D</text>
+      <rect x="16" y="50" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="27" y="50" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+      <rect x="38" y="50" width="10" height="7" rx="1.5" fill="#333" stroke="#111" stroke-width="0.6" />
+    </g>
+  </g>
+</svg>

@@ -2,6 +2,7 @@ import { useUser } from "@/lib/useUser";
 import { SignIn } from "./SignIn";
 import { SignOut } from "./SignOut";
 import { useAdmins } from "@/lib/data";
+import LogoTierList from "./LogoTierList";
 
 export const Nav = () => {
   const admins = useAdmins();
@@ -11,8 +12,9 @@ export const Nav = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary mb-2">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
-          Tier Vote
+        <a className="navbar-brand d-flex align-items-center gap-2" href="/">
+          <LogoTierList />
+          <span>Tier Vote</span>
         </a>
         <button
           className="navbar-toggler"
