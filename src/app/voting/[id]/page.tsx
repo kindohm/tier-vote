@@ -35,31 +35,37 @@ export default function Page() {
   );
   const isOwner = user?.uid === tierList?.createdBy;
   const router = useRouter();
-  // Toast state for newly cast votes
+  // Toast state for vote events (first vote or changed vote)
   const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
-  const voteIdsRef = useRef<Set<string>>(new Set());
+  // Track last known tier per user for current item so we can emit toasts on changes
+  const voteTiersRef = useRef<Map<string, string | null>>(new Map());
 
   // Reset tracking when a new round begins
   useEffect(() => {
-    // Reset seen vote IDs when we switch items
-    voteIdsRef.current = new Set();
+    // New item: clear previous vote tier map
+    voteTiersRef.current = new Map();
   }, [tierList?.currentVoteItemId]);
 
-  // Detect new votes for the active item and create toasts
+  // Detect new or changed votes for the active item and create toasts
   useEffect(() => {
     if (!tierList?.currentVoteItemId) return;
     const currentVotes = votesForCurrentItem;
     for (const v of currentVotes) {
-      if (!voteIdsRef.current.has(v.userId)) {
-        voteIdsRef.current.add(v.userId);
+      const prevTier = voteTiersRef.current.get(v.userId);
+      // First time vote (prevTier undefined) OR tier changed
+      if (prevTier === undefined || prevTier !== v.tier) {
+        voteTiersRef.current.set(v.userId, v.tier || null);
         const id = `${v.userId}-${Date.now()}`;
         const voterName =
           tierList.users.find((u) => u.id === v.userId)?.name || "Someone";
-        const message = `${voterName} voted${v.tier ? ` ${v.tier}` : ""}`;
+        const message =
+          prevTier === undefined
+            ? `${voterName} voted${v.tier ? ` ${v.tier}` : ""}`
+            : `${voterName} updated vote to${v.tier ? ` ${v.tier}` : ""}`;
         setVoteToasts((prev) => prev.concat({ id, message }));
         setTimeout(() => {
           setVoteToasts((prev) => prev.filter((t) => t.id !== id));
-        }, 2000);
+        }, 4000);
       }
     }
   }, [votesForCurrentItem, tierList?.currentVoteItemId, tierList?.users]);
