@@ -87,9 +87,7 @@ export default function Page() {
         const votesFor = item?.votes.filter((v) => v.tier === tier) ?? [];
         return { tier, votesFor: votesFor.length };
       })
-      .sort((a, b) => {
-        return a.votesFor > b.votesFor ? -1 : 1;
-      })[0];
+      .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
     const newItems = tierList.items.map((i) => {
       if (i.id !== item?.id) {
@@ -145,9 +143,37 @@ export default function Page() {
         {tierList?.pendingVoteItemId && secondsUntilStart !== null ? (
           <p>Starting in: {secondsUntilStart}</p>
         ) : null}
-        {tierList?.currentVoteItemId ? (
-          <p>Time left to vote: {secondsLeft}</p>
-        ) : null}
+        {tierList?.currentVoteItemId
+          ? (() => {
+              const votingItem = tierList.items.find(
+                (i) => i.id === tierList.currentVoteItemId
+              );
+              // Distinct participant IDs
+              const participantIds = Array.from(
+                new Set(tierList.users.map((u) => u.id).filter(Boolean))
+              );
+              // Distinct voters for current item
+              const voterIds = new Set(
+                (votingItem?.votes || []).map((v) => v.userId).filter(Boolean)
+              );
+              const waitingCount = participantIds.filter(
+                (id) => !voterIds.has(id)
+              ).length;
+              return (
+                <p>
+                  Time left to vote: {secondsLeft}{" "}
+                  {waitingCount > 0 ? (
+                    <span className="text-muted ms-3">
+                      waiting for {waitingCount}{" "}
+                      {waitingCount === 1 ? "person" : "people"} to vote...
+                    </span>
+                  ) : (
+                    <span className="text-success ms-3">all votes in</span>
+                  )}
+                </p>
+              );
+            })()
+          : null}
         {!tierList?.pendingVoteItemId && !tierList?.currentVoteItemId ? (
           <p>Waiting for admin to start the next round.</p>
         ) : null}
