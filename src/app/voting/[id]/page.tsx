@@ -159,13 +159,22 @@ export default function Page() {
               const waitingCount = participantIds.filter(
                 (id) => !voterIds.has(id)
               ).length;
+              const missingIds = participantIds.filter(
+                (id) => !voterIds.has(id)
+              );
+              const loneUserName =
+                waitingCount === 1
+                  ? tierList.users.find((u) => u.id === missingIds[0])?.name ||
+                    "someone"
+                  : null;
               return (
                 <p>
                   Time left to vote: {secondsLeft}{" "}
                   {waitingCount > 0 ? (
                     <span className="text-muted ms-3">
-                      waiting for {waitingCount}{" "}
-                      {waitingCount === 1 ? "person" : "people"} to vote...
+                      {waitingCount === 1
+                        ? `waiting on ${loneUserName} to vote...`
+                        : `waiting for ${waitingCount} people to vote...`}
                     </span>
                   ) : (
                     <span className="text-success ms-3">all votes in</span>
@@ -201,6 +210,12 @@ export default function Page() {
           </p>
         ) : null}
       </div>
+
+      {tierList?.currentVoteItemId ? (
+        <div className="alert alert-info py-2">
+          drag and drop the image on the bottom row to one of the tiers
+        </div>
+      ) : null}
 
       <Board tierList={tierList} />
       {/* <TierListDebugInfo tierList={tierList} /> */}
