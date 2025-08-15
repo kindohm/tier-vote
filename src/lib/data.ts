@@ -77,3 +77,18 @@ export const useAdmins = () => {
   const x = useCollectionData(q);
   return x[0]?.map((a) => a?.userId);
 };
+
+// Returns richer admin info including displayName if stored on admin doc.
+// Each admin doc is expected to have (optional) fields: userId, displayName.
+export const useAdminsInfo = () => {
+  const db = getDb();
+  const messagesRef = collection(db, "admins");
+  const q = query(messagesRef, limit(50));
+  // include idField so we can fallback to snapshot id
+  // @ts-expect-error idField option not typed in our setup
+  const x = useCollectionData(q, { idField: "id" });
+  return x[0]?.map((a: any) => ({
+    id: a.userId || a.id,
+    name: a.displayName || a.userId || a.id,
+  }));
+};
