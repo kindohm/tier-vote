@@ -17,7 +17,8 @@ export default function Page() {
   const tierList = useTierList(id as string);
   const user = useUser();
 
-  const isCreator = !!tierList?.users.find((u) => u.id === user?.uid);
+  // Only the user who originally created the tier list (createdBy) is the creator.
+  const isCreator = !!(user && tierList && tierList.createdBy === user.uid);
 
   useEffect(() => {
     if (!user || !tierList) return;
@@ -63,7 +64,9 @@ export default function Page() {
             Begin Voting
           </button>
         </div>
-      ) : null}
+      ) : (
+        <div>Waiting for the admin to start the voting.</div>
+      )}
       <h4 className="mt-4">Guests:</h4>
       <ul>
         {tierList?.users.map((user) => {
