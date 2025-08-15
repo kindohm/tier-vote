@@ -277,15 +277,9 @@ export const VotingResults = ({ tierList }: Props) => {
                           return (
                             <span
                               key={v.userId}
-                              title={`${name}: ${v.tier}`}
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => toggleExpanded(key)}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                  e.preventDefault();
-                                  toggleExpanded(key);
-                                }
+                              style={{
+                                position: "relative",
+                                display: "inline-block",
                               }}
                               onMouseEnter={() => setExpandedVoteKey(key)}
                               onMouseLeave={() =>
@@ -293,81 +287,89 @@ export const VotingResults = ({ tierList }: Props) => {
                                   prev === key ? null : prev
                                 )
                               }
-                              className={`vote-badge badge ${tierColor(
-                                v.tier
-                              )} d-inline-flex flex-column justify-content-center ${
-                                expanded ? "expanded" : "align-items-center"
-                              }`}
-                              style={{
-                                minWidth: 34,
-                                height: expanded ? "auto" : 38,
-                                lineHeight: 1.1,
-                                letterSpacing: 0.5,
-                                padding: expanded ? "4px 6px" : "2px 4px",
-                                cursor: "pointer",
-                                position: "relative",
-                                transition: "all .18s ease",
-                                whiteSpace: expanded ? "normal" : "nowrap",
-                                textAlign: expanded ? "left" : "center",
-                              }}
                             >
-                              {!expanded && (
-                                <>
-                                  <span
-                                    style={{ fontSize: 13, fontWeight: 600 }}
-                                  >
-                                    {v.tier}
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontSize: 9,
-                                      fontWeight: 400,
-                                      opacity: 0.85,
-                                      marginTop: -2,
-                                      textTransform: "uppercase",
-                                    }}
-                                  >
-                                    {initials}
-                                  </span>
-                                  <span className="visually-hidden">
-                                    {" "}
-                                    {name}
-                                  </span>
-                                </>
-                              )}
+                              <span
+                                title={`${name}: ${v.tier}`}
+                                role="button"
+                                aria-expanded={expanded}
+                                tabIndex={0}
+                                onClick={() => toggleExpanded(key)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    toggleExpanded(key);
+                                  }
+                                }}
+                                className={`vote-badge badge ${tierColor(
+                                  v.tier
+                                )} d-inline-flex flex-column align-items-center justify-content-center`}
+                                style={{
+                                  minWidth: 34,
+                                  height: 38,
+                                  lineHeight: 1.1,
+                                  letterSpacing: 0.5,
+                                  padding: "2px 4px",
+                                  cursor: "pointer",
+                                  transition: "background-color .18s ease",
+                                  userSelect: "none",
+                                }}
+                              >
+                                <span style={{ fontSize: 13, fontWeight: 600 }}>
+                                  {v.tier}
+                                </span>
+                                <span
+                                  style={{
+                                    fontSize: 9,
+                                    fontWeight: 400,
+                                    opacity: 0.85,
+                                    marginTop: -2,
+                                    textTransform: "uppercase",
+                                  }}
+                                >
+                                  {initials}
+                                </span>
+                                <span className="visually-hidden"> {name}</span>
+                              </span>
                               {expanded && (
                                 <div
-                                  className="d-flex flex-column gap-1"
-                                  style={{ lineHeight: 1.05 }}
+                                  className="shadow-sm border rounded bg-white text-dark p-2 position-absolute"
+                                  style={{
+                                    top: -4,
+                                    left: 0,
+                                    zIndex: 20,
+                                    minWidth: 160,
+                                    maxWidth: 220,
+                                    fontSize: 12,
+                                    lineHeight: 1.2,
+                                    background: "var(--bs-body-bg, #fff)",
+                                  }}
+                                  onMouseEnter={() => setExpandedVoteKey(key)}
+                                  onMouseLeave={() =>
+                                    setExpandedVoteKey((prev) =>
+                                      prev === key ? null : prev
+                                    )
+                                  }
                                 >
-                                  <div className="d-flex align-items-center gap-1 flex-wrap">
+                                  <div className="d-flex align-items-center mb-1 gap-2 flex-wrap">
                                     <span
-                                      style={{
-                                        fontSize: 13,
-                                        fontWeight: 700,
-                                      }}
+                                      className={`badge ${tierColor(v.tier)}`}
+                                      style={{ fontSize: 12, fontWeight: 700 }}
                                     >
                                       {v.tier}
                                     </span>
-                                    <span
-                                      style={{
-                                        fontSize: 11,
-                                        fontWeight: 500,
-                                        textTransform: "none",
-                                      }}
-                                    >
+                                    <span style={{ fontWeight: 500 }}>
                                       {name}
                                     </span>
                                   </div>
-                                  <span
+                                  <div
                                     style={{
-                                      fontSize: 10,
-                                      opacity: 0.85,
-                                      fontWeight: 400,
+                                      fontSize: 11,
+                                      opacity: 0.8,
+                                      fontVariantNumeric: "tabular-nums",
                                     }}
                                   >
                                     {ts || "—"}
-                                  </span>
+                                  </div>
                                 </div>
                               )}
                             </span>
