@@ -23,7 +23,8 @@ export const VotingResults = ({ tierList }: Props) => {
               <span>
                 {item.votes
                   .map((v) => {
-                    return `${v.userName}: ${v.tier}`;
+                    const u = tierList.users.find((u) => u.id === v.userId);
+                    return `${u?.name ?? "unknown"}: ${v.tier}`;
                   })
                   .join(", ")}
               </span>

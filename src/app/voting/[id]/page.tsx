@@ -55,9 +55,9 @@ export default function Page() {
       if (!voteIdsRef.current.has(v.userId)) {
         voteIdsRef.current.add(v.userId);
         const id = `${v.userId}-${Date.now()}`;
-        const message = `${v.userName || "Someone"} voted${
-          v.tier ? ` ${v.tier}` : ""
-        }`;
+        const voterName =
+          tierList.users.find((u) => u.id === v.userId)?.name || "Someone";
+        const message = `${voterName} voted${v.tier ? ` ${v.tier}` : ""}`;
         setVoteToasts((prev) => prev.concat({ id, message }));
         setTimeout(() => {
           setVoteToasts((prev) => prev.filter((t) => t.id !== id));

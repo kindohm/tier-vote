@@ -5,7 +5,6 @@ type User = {
 
 export type Vote = {
   userId: string;
-  userName: string;
   tier: string;
 };
 

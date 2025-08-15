@@ -40,7 +40,6 @@ export const Row = ({ tier, tierList }: Props) => {
                     {
                       userId: user?.uid,
                       tier,
-                      userName: user?.displayName,
                     } as Vote,
                   ]
                 : []
