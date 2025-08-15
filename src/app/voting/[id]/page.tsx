@@ -112,7 +112,11 @@ export default function Page() {
         <Title tierList={tierList} user={user} />
       )}
       <div className="mb-2 mt-2">
-        <h3>Time left: {secondsLeft} </h3>
+        {tierList?.currentVoteItemId ? (
+          <p>Time left: {secondsLeft}</p>
+        ) : (
+          <p>Waiting for admin to start the round.</p>
+        )}
         {isOwner ? (
           <p>
             <button
