@@ -71,17 +71,47 @@ export default function Home() {
             <div className={isAdmin ? "col-lg-7" : "col-12"}>
               <h3>Tier Lists You Participated In</h3>
               {participatedLoading ? (
-                <div
-                  className="d-flex align-items-center gap-2 text-muted small"
-                  style={{ minHeight: 48 }}
-                >
-                  <div
-                    className="spinner-border spinner-border-sm text-secondary"
-                    role="status"
-                    aria-label="Loading participated tier lists"
-                  ></div>
-                  Loading...
-                </div>
+                <>
+                  <div className="text-muted small mb-1">Loading...</div>
+                  <table className="table table-compact">
+                    <tbody>
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <tr key={i}>
+                          <td>
+                            <span
+                              className="skeleton skeleton-table"
+                              style={{
+                                display: "inline-block",
+                                height: 14,
+                                width: 140,
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <span
+                              className="skeleton skeleton-table"
+                              style={{
+                                display: "inline-block",
+                                height: 14,
+                                width: 90,
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <span
+                              className="skeleton skeleton-table"
+                              style={{
+                                display: "inline-block",
+                                height: 20,
+                                width: 70,
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
               ) : (
                 <table className="table table-compact">
                   <tbody>
@@ -133,17 +163,47 @@ export default function Home() {
                 )}
                 <h3>Your Created Tier Lists</h3>
                 {userTierListsLoading ? (
-                  <div
-                    className="d-flex align-items-center gap-2 text-muted small"
-                    style={{ minHeight: 48 }}
-                  >
-                    <div
-                      className="spinner-border spinner-border-sm text-secondary"
-                      role="status"
-                      aria-label="Loading your tier lists"
-                    ></div>
-                    Loading...
-                  </div>
+                  <>
+                    <div className="text-muted small mb-1">Loading...</div>
+                    <table className="table table-compact">
+                      <tbody>
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <tr key={i}>
+                            <td>
+                              <span
+                                className="skeleton skeleton-table"
+                                style={{
+                                  display: "inline-block",
+                                  height: 14,
+                                  width: 160,
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <span
+                                className="skeleton skeleton-table"
+                                style={{
+                                  display: "inline-block",
+                                  height: 14,
+                                  width: 90,
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <span
+                                className="skeleton skeleton-table"
+                                style={{
+                                  display: "inline-block",
+                                  height: 28,
+                                  width: 60,
+                                }}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
                 ) : (
                   <table className="table table-compact">
                     <tbody>
