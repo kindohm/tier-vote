@@ -64,6 +64,8 @@ type Props = {
 export const VotingResults = ({ tierList }: Props) => {
   const allVotes = useAllVotesForList(tierList.id);
   const [view, setView] = useState<"matrix" | "tiers">("matrix");
+  // Only show results after at least one item has a finalized tier assignment.
+  const hasPlacedItem = tierList.items.some((i) => !!i.tier);
 
   const users = useMemo(() => tierList.users, [tierList.users]);
   const userIdToName = useMemo(
@@ -125,6 +127,8 @@ export const VotingResults = ({ tierList }: Props) => {
     });
     return grp;
   }, [withStats]);
+
+  if (!hasPlacedItem) return null;
 
   return (
     <div>
