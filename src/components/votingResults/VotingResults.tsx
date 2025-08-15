@@ -128,7 +128,12 @@ export const VotingResults = ({ tierList }: Props) => {
     return grp;
   }, [withStats]);
 
-  if (!hasPlacedItem) return null;
+  if (!hasPlacedItem) {
+    // Show nothing until at least one item placed (unchanged behavior)
+    return null;
+  }
+
+  const isLoadingMatrix = sortedWithStats.length === 0;
 
   return (
     <div>
@@ -166,6 +171,43 @@ export const VotingResults = ({ tierList }: Props) => {
               </tr>
             </thead>
             <tbody>
+              {isLoadingMatrix && (
+                <>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={`sk-${i}`}>
+                      <td>
+                        <span
+                          className="skeleton"
+                          style={{ width: 64, height: 64, display: "block" }}
+                        />
+                      </td>
+                      <td>
+                        <span
+                          className="skeleton"
+                          style={{ width: 32, height: 20, display: "block" }}
+                        />
+                      </td>
+                      <td>
+                        <span
+                          className="skeleton"
+                          style={{ width: 140, height: 14, display: "block" }}
+                        />
+                      </td>
+                      <td>
+                        <div className="d-flex gap-1">
+                          {Array.from({ length: 3 }).map((__, j) => (
+                            <span
+                              key={j}
+                              className="skeleton"
+                              style={{ width: 34, height: 38 }}
+                            />
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              )}
               {sortedWithStats.map(({ item, votes, dist }) => {
                 const sortedVotes = [...votes].sort((a, b) =>
                   a.tier.localeCompare(b.tier)

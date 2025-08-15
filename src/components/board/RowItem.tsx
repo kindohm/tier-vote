@@ -12,6 +12,7 @@ type Props = {
 export const RowItem = ({ item, tierList }: Props) => {
   const current = tierList?.currentVoteItemId === item.id;
   const previous = tierList?.lastVoteItemId === item.id;
+  const loading = !item.imageURL; // crude heuristic (could expand with onLoad state)
   const [isDragging, setIsDragging] = useState(false);
   const [{ isDragging: dndDragging }, drag] = useDrag(
     () => ({
@@ -54,15 +55,22 @@ export const RowItem = ({ item, tierList }: Props) => {
 
   return (
     <span ref={drag} className="me-1" style={draggableStyles}>
-      <Image
-        src={`${IMG_HOST}/${decodeURIComponent(item.imageURL ?? "")}`}
-        alt="tier image"
-        width="75"
-        height="75"
-        style={style}
-        priority={true}
-        draggable={false}
-      />
+      {loading ? (
+        <span
+          className="skeleton"
+          style={{ width: 75, height: 75, display: "inline-block" }}
+        />
+      ) : (
+        <Image
+          src={`${IMG_HOST}/${decodeURIComponent(item.imageURL ?? "")}`}
+          alt="tier image"
+          width="75"
+          height="75"
+          style={style}
+          priority={true}
+          draggable={false}
+        />
+      )}
     </span>
   );
 };
