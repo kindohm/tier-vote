@@ -19,24 +19,27 @@ const style = {
   minHeight: "78px",
 };
 
-export const Row = ({ tier, tierList }: Props) => {
+export const Row = ({ tier, tierList, unassigned }: Props) => {
   const user = useUser();
 
-  const [, drop] = useDrop(
+  const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "item",
       drop: async (item: TierItem) => {
         if (!tierList?.currentVoteItemId) return; // no active round
         if (item.id !== tierList.currentVoteItemId) return; // only active item can be voted
         if (!user?.uid) return;
-        // Cast / replace vote in subcollection
+        if (!tier) return; // disallow dropping back to unassigned row during voting
         await castVote({
           listId: tierList.id,
           itemId: item.id,
           userId: user.uid,
-          tier: tier || "",
+          tier,
         });
       },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
     }),
     [tierList, tier, user?.uid]
   );
@@ -61,12 +64,74 @@ export const Row = ({ tier, tierList }: Props) => {
     }
   }
 
+  const votedTier = userVote?.tier || "";
+  // Show locked (cancel) overlay only after the user has placed the active item into a tier
+  // i.e. once they have a vote recorded (votedTier truthy). Before first placement, keep row enabled.
+  const showLocked = unassigned && voteInProgress && !!votedTier && isOver;
   return (
-    <div ref={drop} style={{ ...style, flexWrap: "wrap" }}>
+    <div
+      ref={drop}
+      style={{
+        ...style,
+        flexWrap: "wrap",
+        opacity: showLocked ? 0.55 : 1,
+        border: showLocked ? "2px dashed #999" : undefined,
+        position: "relative",
+        background: showLocked ? "#e0e0e0" : style.background,
+        transition: "all .15s",
+      }}
+      title={
+        showLocked
+          ? "You can't move the item back here during voting"
+          : undefined
+      }
+    >
       {tier ? <TierLetter letter={tier} /> : null}
       {items?.map((item) => {
         return <RowItem key={item.id} item={item} tierList={tierList} />;
       })}
+      {showLocked && (
+        <span
+          aria-label="Dropping here is disabled"
+          title="Can't drop back here"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+            opacity: 0.85,
+          }}
+        >
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="10" fill="#dc3545" opacity="0.9" />
+            <line
+              x1="8"
+              y1="8"
+              x2="16"
+              y2="16"
+              stroke="#fff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <line
+              x1="16"
+              y1="8"
+              x2="8"
+              y2="16"
+              stroke="#fff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </span>
+      )}
     </div>
   );
 };
