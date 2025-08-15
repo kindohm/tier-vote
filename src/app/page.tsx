@@ -106,9 +106,11 @@ export default function Home() {
                 {adminsInfo && (
                   <div className="mb-4">
                     <h4>Admin Users</h4>
-                    <ul className="small" style={{ paddingLeft: '1rem' }}>
+                    <ul className="small" style={{ paddingLeft: "1rem" }}>
                       {adminsInfo.map((a) => (
-                        <li key={a.id}>{a.id === user?.uid ? `${a.name} (you)` : a.name}</li>
+                        <li key={a.id}>
+                          {a.id === user?.uid ? `${a.name} (you)` : a.name}
+                        </li>
                       ))}
                     </ul>
                   </div>

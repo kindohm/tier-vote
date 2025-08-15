@@ -12,6 +12,9 @@ import { updateTierList } from "@/lib/data";
 import { useVotesForItem, VoteDoc } from "../../../lib/useVotes";
 import { randItem } from "@/lib/util";
 import { Title } from "@/components/Title";
+import { CountdownOverlay } from "@/components/CountdownOverlay";
+// Progress bar extracted component (relative import fallback)
+import { RoundProgressBar } from "../../../components/RoundProgressBar";
 import { VoteToasts, VoteToast } from "@/components/VoteToasts";
 
 export default function Page() {
@@ -24,6 +27,9 @@ export default function Page() {
   );
   const user = useUser();
   const [secondsLeft, setSecondsLeft] = useState(20);
+  const [roundTotalSeconds, setRoundTotalSeconds] = useState<number | null>(
+    null
+  );
   const [secondsUntilStart, setSecondsUntilStart] = useState<number | null>(
     null
   );
@@ -82,6 +88,7 @@ export default function Page() {
         });
         const left = differenceInSeconds(newEndDate, new Date());
         setSecondsLeft(left);
+        setRoundTotalSeconds(left);
         setSecondsUntilStart(null);
         return; // skip active logic this tick
       }
@@ -102,6 +109,10 @@ export default function Page() {
       tierList?.itemVotingEndsAt,
       new Date()
     );
+    // Initialize total if we joined mid-round
+    if (roundTotalSeconds === null && newSecondsLeft > 0) {
+      setRoundTotalSeconds(newSecondsLeft);
+    }
 
     setSecondsLeft(newSecondsLeft);
 
@@ -139,6 +150,7 @@ export default function Page() {
     });
 
     setSecondsLeft(0);
+    setRoundTotalSeconds(null);
   };
 
   if (tierList && !tierList?.inProgress) {
@@ -169,9 +181,7 @@ export default function Page() {
         <Title tierList={tierList} user={user} />
       )}
       <div className="mb-2 mt-2">
-        {tierList?.pendingVoteItemId && secondsUntilStart !== null ? (
-          <p>Starting in: {secondsUntilStart}</p>
-        ) : null}
+        {/* Removed inline countdown text; now using overlay */}
         {tierList?.currentVoteItemId
           ? (() => {
               // Distinct participant IDs
@@ -194,18 +204,21 @@ export default function Page() {
                     "someone"
                   : null;
               return (
-                <p>
-                  Time left to vote: {secondsLeft}{" "}
+                <div className="mb-2">
+                  <RoundProgressBar
+                    secondsLeft={secondsLeft}
+                    totalSeconds={roundTotalSeconds}
+                  />
                   {waitingCount > 0 ? (
-                    <span className="text-muted ms-3">
+                    <p className="text-muted small mb-0">
                       {waitingCount === 1
                         ? `waiting on ${loneUserName} to vote...`
                         : `waiting for ${waitingCount} people to vote...`}
-                    </span>
+                    </p>
                   ) : (
-                    <span className="text-success ms-3">all votes in</span>
+                    <p className="text-success small mb-0">all votes in</p>
                   )}
-                </p>
+                </div>
               );
             })()
           : null}
@@ -243,7 +256,12 @@ export default function Page() {
         </div>
       ) : null}
 
-      <Board tierList={tierList} />
+      <div className="position-relative" style={{ minHeight: 300 }}>
+        <Board tierList={tierList} />
+        {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
+          <CountdownOverlay seconds={secondsUntilStart} />
+        )}
+      </div>
       {/* Vote Toasts */}
       <VoteToasts toasts={voteToasts} />
       {/* <TierListDebugInfo tierList={tierList} /> */}
