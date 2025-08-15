@@ -9,6 +9,7 @@ import { useInterval, useTimeout } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
 import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data";
+import { useVotesForItem, VoteDoc } from "../../../lib/useVotes";
 import { randItem } from "@/lib/util";
 import { Title } from "@/components/Title";
 import { VoteToasts, VoteToast } from "@/components/VoteToasts";
@@ -17,6 +18,10 @@ export default function Page() {
   const params = useParams();
   const { id } = params;
   const tierList = useTierList(id as string);
+  const votesForCurrentItem: VoteDoc[] = useVotesForItem(
+    id as string,
+    tierList?.currentVoteItemId || undefined
+  );
   const user = useUser();
   const [secondsLeft, setSecondsLeft] = useState(20);
   const [secondsUntilStart, setSecondsUntilStart] = useState<number | null>(
@@ -30,27 +35,14 @@ export default function Page() {
 
   // Reset tracking when a new round begins
   useEffect(() => {
-    if (!tierList?.currentVoteItemId) {
-      voteIdsRef.current = new Set();
-      return;
-    }
-    const currentItem = tierList.items.find(
-      (i) => i.id === tierList.currentVoteItemId
-    );
-    const existing = new Set(
-      (currentItem?.votes || []).map((v) => v.userId).filter(Boolean)
-    );
-    voteIdsRef.current = existing; // initialize with existing so we only toast truly new votes
+    // Reset seen vote IDs when we switch items
+    voteIdsRef.current = new Set();
   }, [tierList?.currentVoteItemId]);
 
   // Detect new votes for the active item and create toasts
   useEffect(() => {
     if (!tierList?.currentVoteItemId) return;
-    const currentItem = tierList.items.find(
-      (i) => i.id === tierList.currentVoteItemId
-    );
-    if (!currentItem) return;
-    const currentVotes = currentItem.votes || [];
+    const currentVotes = votesForCurrentItem;
     for (const v of currentVotes) {
       if (!voteIdsRef.current.has(v.userId)) {
         voteIdsRef.current.add(v.userId);
@@ -64,7 +56,7 @@ export default function Page() {
         }, 2000);
       }
     }
-  }, [tierList?.items, tierList?.currentVoteItemId]);
+  }, [votesForCurrentItem, tierList?.currentVoteItemId, tierList?.users]);
 
   useInterval(() => {
     // Pending (pre-round) countdown logic
@@ -120,23 +112,18 @@ export default function Page() {
 
   const forceEnd = () => {
     // tally....
-    const item = tierList.items.find(
-      (i) => i.id === tierList.currentVoteItemId
-    );
-
     const totals = tierList.tiers
       .map((tier) => {
-        const votesFor = item?.votes.filter((v) => v.tier === tier) ?? [];
+        const votesFor = votesForCurrentItem.filter(
+          (v: VoteDoc) => v.tier === tier
+        );
         return { tier, votesFor: votesFor.length };
       })
       .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
-    const newItems = tierList.items.map((i) => {
-      if (i.id !== item?.id) {
-        return i;
-      }
-      return { ...item, tier: totals.tier };
-    });
+    const newItems = tierList.items.map((i) =>
+      i.id === tierList.currentVoteItemId ? { ...i, tier: totals.tier } : i
+    );
 
     const inProgress = !!newItems.find((i) => !i.tier);
     const closed = !inProgress;
@@ -187,16 +174,13 @@ export default function Page() {
         ) : null}
         {tierList?.currentVoteItemId
           ? (() => {
-              const votingItem = tierList.items.find(
-                (i) => i.id === tierList.currentVoteItemId
-              );
               // Distinct participant IDs
               const participantIds = Array.from(
                 new Set(tierList.users.map((u) => u.id).filter(Boolean))
               );
               // Distinct voters for current item
               const voterIds = new Set(
-                (votingItem?.votes || []).map((v) => v.userId).filter(Boolean)
+                votesForCurrentItem.map((v: any) => v.userId).filter(Boolean)
               );
               const waitingCount = participantIds.filter(
                 (id) => !voterIds.has(id)

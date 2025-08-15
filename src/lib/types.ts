@@ -11,7 +11,6 @@ export type Vote = {
 export type TierItem = {
   id: string;
   imageURL?: string;
-  votes: Vote[];
   tier?: string;
   modifiedAt: Date;
 };

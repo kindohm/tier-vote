@@ -1,9 +1,9 @@
-import { TierItem, TierList, Vote } from "@/lib/types";
+import { TierItem, TierList } from "@/lib/types";
 import { TierLetter } from "./TierLetter";
 import { RowItem } from "./RowItem";
 import { useDrop } from "react-dnd";
-import { updateTierList } from "@/lib/data";
 import { useUser } from "@/lib/useUser";
+import { castVote, useUserVoteForItem } from "../../lib/useVotes";
 
 type Props = {
   tier?: string;
@@ -25,55 +25,41 @@ export const Row = ({ tier, tierList }: Props) => {
   const [, drop] = useDrop(
     () => ({
       accept: "item",
-      drop: (item: TierItem) => {
-        // update the tierlist
-        // I am so sorry to my future self for this logic.
-        const newItems = tierList.items.reduce((acc, i: TierItem) => {
-          if (i.id === item.id) {
-            const votes: Vote[] = i.votes.reduce(
-              (newVotes: Vote[], v: Vote) => {
-                if (v.userId === user?.uid) return newVotes;
-                return newVotes.concat(v);
-              },
-              tier
-                ? [
-                    {
-                      userId: user?.uid,
-                      tier,
-                    } as Vote,
-                  ]
-                : []
-            );
-
-            return acc.concat([{ ...i, modifiedAt: new Date(), votes }]);
-          }
-          return acc.concat([i]);
-        }, [] as TierItem[]);
-        const newTierList = { ...tierList, items: newItems };
-        updateTierList(tierList.id, newTierList);
+      drop: async (item: TierItem) => {
+        if (!tierList?.currentVoteItemId) return; // no active round
+        if (item.id !== tierList.currentVoteItemId) return; // only active item can be voted
+        if (!user?.uid) return;
+        // Cast / replace vote in subcollection
+        await castVote({
+          listId: tierList.id,
+          itemId: item.id,
+          userId: user.uid,
+          tier: tier || "",
+        });
       },
     }),
-    [tierList]
+    [tierList, tier, user?.uid]
   );
 
-  const items = tierList?.items
-    .filter((i) => {
-      const voteInProgress = !!tierList.currentVoteItemId;
-      const isVotingItem = tierList.currentVoteItemId === i.id;
+  // Pre-compute active item & user's vote (hook at top level to obey rules of hooks)
+  const activeItemId = tierList?.currentVoteItemId || undefined;
+  const userVote = useUserVoteForItem(tierList?.id, activeItemId, user?.uid);
 
-      const votedTier = i.votes.find((v) => v.userId === user?.uid)?.tier;
-
-      if (!voteInProgress) {
-        return i.tier === tier || (!i.tier && !tier);
-      }
-
-      if (!isVotingItem) {
-        return false;
-      }
-
-      return (!!tier && votedTier === tier) || (!tier && !votedTier);
-    })
-    .sort((a, b) => (a.modifiedAt > b.modifiedAt ? 1 : -1));
+  let items: TierItem[] = [];
+  const voteInProgress = !!activeItemId;
+  if (!voteInProgress) {
+    items = (tierList?.items || [])
+      .filter((i) => i.tier === tier || (!i.tier && !tier))
+      .sort((a, b) => (a.modifiedAt > b.modifiedAt ? 1 : -1));
+  } else if (tierList) {
+    const activeItem = tierList.items.find((i) => i.id === activeItemId);
+    const votedTier = userVote?.tier || "";
+    if (activeItem) {
+      const shouldShow =
+        (!!tier && votedTier === tier) || (!tier && !votedTier);
+      if (shouldShow) items = [activeItem];
+    }
+  }
 
   return (
     <div ref={drop} style={{ ...style, flexWrap: "wrap" }}>
