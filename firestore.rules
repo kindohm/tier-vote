@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+	match /databases/{database}/documents {
+
+		function isSignedIn() {
+			return request.auth != null;
+		}
+
+		function isAdmin() {
+			return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+		}
+
+		// Core tier lists collection (lowercase)
+		match /tierlists/{listId} {
+			allow read: if isSignedIn();
+			// TEMP: allow any signed-in user to create until admin doc IDs are normalized to uid.
+			allow create: if isSignedIn() && request.resource.data.createdBy == request.auth.uid;
+			// TEMP: broaden update so participants can add themselves to users. Harden later.
+			allow update: if isSignedIn();
+			allow delete: if isAdmin();
+
+			// Votes subcollection (if/when used under lowercase path)
+			match /votes/{voteId} {
+				allow read: if isSignedIn();
+				allow create, update: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.listId == listId
+					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
+			}
+		}
+
+		// Legacy camel-case parent for existing votes logic
+		match /tierLists/{listId} {
+			allow read: if isSignedIn();
+			// Prevent creating new lists here; only read/update if already exists & user is owner/admin
+			allow create: if false; // enforce new lists use /tierlists
+			allow update: if isSignedIn() && (isAdmin() || resource.data.createdBy == request.auth.uid);
+			allow delete: if isAdmin();
+
+			match /votes/{voteId} {
+				allow read: if isSignedIn();
+				allow create, update: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.listId == listId
+					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
+			}
+		}
+
+		// Admins list
+		match /admins/{adminId} {
+			allow read: if isSignedIn();
+			allow create, update, delete: if isAdmin();
+		}
+
+		// Generic collection group access for votes aggregation (read-only)
+		match /{path=**}/votes/{voteId} {
+			allow read: if isSignedIn();
+		}
+	}
+}
