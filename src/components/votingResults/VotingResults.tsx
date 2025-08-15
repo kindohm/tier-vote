@@ -194,7 +194,7 @@ export const VotingResults = ({ tierList }: Props) => {
                         )}
                         {sortedVotes.map((v) => {
                           const name = userIdToName[v.userId] || "?";
-                          // user initials for compact badge
+                          // user initials for compact secondary line
                           const initials = name
                             .split(/\s+/)
                             .map((p) => p[0])
@@ -207,14 +207,29 @@ export const VotingResults = ({ tierList }: Props) => {
                               title={`${name}: ${v.tier}`}
                               className={`badge ${tierColor(
                                 v.tier
-                              )} d-inline-flex align-items-center justify-content-center`}
+                              )} d-inline-flex flex-column align-items-center justify-content-center`}
                               style={{
-                                minWidth: 30,
-                                fontSize: 11,
+                                minWidth: 34,
+                                height: 38,
+                                lineHeight: 1.1,
                                 letterSpacing: 0.5,
+                                padding: "2px 4px",
                               }}
                             >
-                              {v.tier}
+                              <span style={{ fontSize: 13, fontWeight: 600 }}>
+                                {v.tier}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: 9,
+                                  fontWeight: 400,
+                                  opacity: 0.85,
+                                  marginTop: -2,
+                                  textTransform: "uppercase",
+                                }}
+                              >
+                                {initials}
+                              </span>
                               <span className="visually-hidden"> {name}</span>
                             </span>
                           );
