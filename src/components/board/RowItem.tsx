@@ -14,6 +14,8 @@ export const RowItem = ({ item, tierList }: Props) => {
   const current = tierList?.currentVoteItemId === item.id;
   const previous = tierList?.lastVoteItemId === item.id;
   const loading = !item.imageURL; // crude heuristic (could expand with onLoad state)
+  const decodedUrl = item.imageURL ? decodeURIComponent(item.imageURL) : "";
+  const fileName = decodedUrl ? decodedUrl.split(/[/\\]/).pop() : "";
   // Always call hook (pass undefined when not current) to satisfy Rules of Hooks
   const votesForItem = useVotesForItem(
     tierList.id,
@@ -127,16 +129,18 @@ export const RowItem = ({ item, tierList }: Props) => {
         <span
           className="skeleton skeleton-img"
           style={{ width: 75, height: 75, display: "inline-block" }}
+          title={fileName || undefined}
         />
       ) : (
         <Image
-          src={`${IMG_HOST}/${decodeURIComponent(item.imageURL ?? "")}`}
+          src={`${IMG_HOST}/${decodedUrl}`}
           alt="tier image"
           width="75"
           height="75"
           style={style}
           priority={true}
           draggable={false}
+          title={fileName || undefined}
         />
       )}
       {miniBar}
