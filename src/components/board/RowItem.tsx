@@ -36,6 +36,7 @@ export const RowItem = ({ item, tierList }: Props) => {
         }
       : {};
 
+  const isVoting = !!tierList.currentVoteItemId;
   const draggableStyles: React.CSSProperties = current
     ? {
         cursor: "grab",
@@ -47,7 +48,9 @@ export const RowItem = ({ item, tierList }: Props) => {
         zIndex: isDragging ? 10 : undefined,
         position: "relative",
       }
-    : { cursor: "not-allowed", opacity: 0.55 };
+    : isVoting
+    ? { cursor: "not-allowed", opacity: 0.55, transition: "opacity .15s" }
+    : { cursor: "default" };
 
   return (
     <span ref={drag} className="me-1" style={draggableStyles}>
