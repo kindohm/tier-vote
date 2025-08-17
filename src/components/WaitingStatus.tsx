@@ -15,7 +15,7 @@ export const WaitingStatus: React.FC<WaitingStatusProps> = ({
   votesForCurrentItem,
   className = "",
 }) => {
-  const { waitingCount, waitingUsers, participants, voterSet } = useMemo(() => {
+  const { waitingCount, participants, voterSet } = useMemo(() => {
     if (!tierList?.currentVoteItemId) {
       return {
         waitingCount: 0,

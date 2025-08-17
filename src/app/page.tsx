@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import styles from "./page.module.css";
 import { SetStateAction, useState } from "react";
 import { useUser } from "@/lib/useUser";
 import { useAdmins, useAdminsInfo, useTierListsByUser } from "@/lib/data";

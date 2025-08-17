@@ -11,7 +11,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, loading] = useAuthState(getAppAuth());
+  const [loading] = useAuthState(getAppAuth());
 
   return (
     <html lang="en">

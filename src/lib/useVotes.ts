@@ -3,12 +3,9 @@ import {
   collection,
   doc,
   onSnapshot,
-  orderBy,
   query,
   setDoc,
   where,
-  getDocs,
-  addDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { getDb } from "./getDb";
@@ -18,6 +15,7 @@ import { Vote } from "./types";
 export interface VoteDoc extends Vote {
   listId: string; // parent tier list id
   itemId: string; // tier item id
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createdAt?: any; // server timestamp
 }
 
