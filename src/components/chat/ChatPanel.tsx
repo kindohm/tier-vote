@@ -45,6 +45,9 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const user = useUser();
 
+  // maximum allowed characters for a single chat message (client-side only)
+  const MAX_CHARS = 1000;
+
   useEffect(() => {
     // scroll to bottom when messages change
     setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50);
@@ -58,7 +61,9 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
   };
 
   const sendMessage = async (text: string) => {
+    // client-side guard: enforce the character limit before attempting to send
     if (!text.trim() || !listId || !user) return;
+    if (text.trim().length > MAX_CHARS) return;
 
     // optimistic message
     const clientId = `c-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
@@ -89,6 +94,8 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    // client-side validation: don't submit empty messages or messages over the limit
+    if (!input.trim() || input.trim().length === 0 || input.length > MAX_CHARS) return;
     void sendMessage(input);
   };
 
@@ -156,28 +163,74 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
           </div>
 
           <form onSubmit={onSubmit} className="p-3 border-top" style={{ flex: '0 0 auto' }}>
-            <div className="d-flex">
-              <textarea
-                ref={inputRef as any}
-                className="form-control"
-                placeholder={user ? "Write a message... (Shift+Enter for newline)" : "Sign in to chat"}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    // prevent newline, submit instead
+            <div className="d-flex flex-column">
+              <div className="d-flex">
+                <textarea
+                  ref={inputRef as any}
+                  className="form-control"
+                  placeholder={user ? "Write a message... (Shift+Enter for newline)" : "Sign in to chat"}
+                  value={input}
+                  onChange={(e) => {
+                    // trim input to the client-side max immediately
+                    const v = e.target.value || '';
+                    if (v.length > MAX_CHARS) {
+                      setInput(v.slice(0, MAX_CHARS));
+                    } else {
+                      setInput(v);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Submit on Enter (without Shift)
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      if (input.length <= MAX_CHARS) {
+                        void sendMessage(input);
+                      }
+                      return;
+                    }
+
+                    // block additional printable characters when at the limit
+                    const isPrintable = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+                    if (isPrintable && input.length >= MAX_CHARS) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    // insert only up to the allowed characters at the caret
                     e.preventDefault();
-                    void sendMessage(input);
-                  }
-                }}
-                aria-label="Chat message"
-                disabled={!user}
-                rows={2}
-                style={{ resize: 'vertical' }}
-              />
-              <button type="submit" className="btn btn-primary ms-2" disabled={!input.trim() || !user}>
-                Send
-              </button>
+                    const paste = e.clipboardData?.getData('text') || '';
+                    const el = e.target as HTMLTextAreaElement;
+                    const start = el.selectionStart ?? input.length;
+                    const end = el.selectionEnd ?? input.length;
+                    const before = input.slice(0, start);
+                    const after = input.slice(end);
+                    const allowed = Math.max(0, MAX_CHARS - before.length - after.length);
+                    const toInsert = paste.slice(0, allowed);
+                    const newVal = before + toInsert + after;
+                    setInput(newVal);
+                    // move caret after inserted text
+                    requestAnimationFrame(() => {
+                      const pos = start + toInsert.length;
+                      el.setSelectionRange(pos, pos);
+                    });
+                  }}
+                   aria-label="Chat message"
+                   disabled={!user}
+                   rows={2}
+                   style={{ resize: 'vertical' }}
+                 />
+                <button type="submit" className="btn btn-primary ms-2" disabled={!input.trim() || !user || input.length > MAX_CHARS}>
+                  Send
+                </button>
+              </div>
+
+              <div className="d-flex justify-content-end mt-1">
+                { (MAX_CHARS - input.length) < 100 && (
+                  <small className={`${input.length > MAX_CHARS ? 'text-danger' : 'text-muted'}`}>
+                    {Math.max(0, MAX_CHARS - input.length)} chars left
+                  </small>
+                ) }
+              </div>
             </div>
           </form>
         </div>
