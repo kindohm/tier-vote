@@ -9,6 +9,7 @@ import { TierItem } from "@/lib/types";
 import { useTierList } from "@/lib/useTierList";
 import { useUser } from "@/lib/useUser";
 import { useParams } from "next/navigation";
+import { ChatPanel } from "@/components/chat/ChatPanel";
 
 export default function Page() {
   const params = useParams();
@@ -63,6 +64,8 @@ export default function Page() {
       </div>
 
       {/* <TierListDebugInfo tierList={tierList} /> */}
+
+      {tierList?.id && <ChatPanel listId={tierList.id} />}
     </div>
   );
 }
