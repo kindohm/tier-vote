@@ -1,0 +1,12 @@
+# Disable Netlify preview builds and branch deploys by short-circuiting those contexts.
+# Production builds (main branch) will still run normally.
+
+[build]
+  # Adjust publish dir if needed for your project (Next.js uses .next for SSR/static, but Netlify adapter varies).
+  # Leaving publish unset so production builds behave according to your project's Netlify settings.
+
+[context.deploy-preview]
+  command = "echo 'Skipping deploy preview' && exit 0"
+
+[context.branch-deploy]
+  command = "echo 'Skipping branch deploy' && exit 0"
