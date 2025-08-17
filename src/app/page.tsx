@@ -37,6 +37,8 @@ export default function Home() {
     deleteDoc(document);
   };
 
+  console.log("I am a page", user)
+
   return (
     <div>
       <h1>Tier Vote</h1>

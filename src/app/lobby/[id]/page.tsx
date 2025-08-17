@@ -33,7 +33,7 @@ export default function Page() {
     if (tierList?.inProgress) {
       router.push(`/voting/${tierList.id}`);
     }
-  }, [tierList?.inProgress, router, tierList.id]);
+  }, [tierList?.inProgress, router, tierList?.id]);
 
   const beginVotingClick = async () => {
     await updateTierList(id as string, {

@@ -17,6 +17,10 @@ const firebaseConfig = {
 
 export const getApp = () => {
   if (!app) {
+    // debug: log initialization attempt (do not print secret values)
+    if (typeof window !== 'undefined' && process.env) {
+      console.debug('getApp: initializing Firebase app, projectId present=', !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+    }
     app = initializeApp(firebaseConfig);
   }
   return app;
