@@ -18,6 +18,7 @@ import { RoundProgressBar } from "../../../components/RoundProgressBar";
 import { VoteToasts, VoteToast } from "@/components/VoteToasts";
 import { WaitingStatus } from "@/components/WaitingStatus";
 import { VotingResults } from "@/components/votingResults/VotingResults";
+import { ChatPanel } from "@/components/chat/ChatPanel";
 
 export default function Page() {
   const params = useParams();
@@ -180,76 +181,79 @@ export default function Page() {
   };
 
   return (
-    <div>
-      {tierList && !tierList?.inProgress ? (
-        <div className="alert alert-warning">
-          this tier list is closed, redirecting...
+    <>
+      <div className="position-relative">
+        {tierList && !tierList?.inProgress ? (
+          <div className="alert alert-warning">
+            this tier list is closed, redirecting...
+          </div>
+        ) : (
+          <Title tierList={tierList} user={user} />
+        )}
+        <div className="mb-2 mt-2">
+          {/* Removed inline countdown text; now using overlay */}
+          {tierList?.currentVoteItemId && (
+            <div className="mb-2">
+              <RoundProgressBar
+                secondsLeft={secondsLeft}
+                totalSeconds={roundTotalSeconds}
+              />
+              <WaitingStatus
+                tierList={tierList}
+                votesForCurrentItem={votesForCurrentItem}
+              />
+            </div>
+          )}
+          {!tierList?.pendingVoteItemId && !tierList?.currentVoteItemId ? (
+            <p>Waiting for admin to start the next round.</p>
+          ) : null}
+          {isOwner ? (
+            <p>
+              <button
+                onClick={forceEnd}
+                className="btn btn-sm btn-secondary me-3"
+                disabled={!tierList?.currentVoteItemId}
+              >
+                force end round
+              </button>
+
+              <button
+                onClick={startNext}
+                className="btn btn-sm btn-secondary"
+                disabled={
+                  !!tierList?.currentVoteItemId ||
+                  !!tierList?.pendingVoteItemId ||
+                  !tierList?.inProgress
+                }
+              >
+                start next round
+              </button>
+            </p>
+          ) : null}
         </div>
-      ) : (
-        <Title tierList={tierList} user={user} />
-      )}
-      <div className="mb-2 mt-2">
-        {/* Removed inline countdown text; now using overlay */}
-        {tierList?.currentVoteItemId && (
-          <div className="mb-2">
-            <RoundProgressBar
-              secondsLeft={secondsLeft}
-              totalSeconds={roundTotalSeconds}
-            />
-            <WaitingStatus
-              tierList={tierList}
-              votesForCurrentItem={votesForCurrentItem}
-            />
+
+        {tierList?.currentVoteItemId ? (
+          <div className="alert alert-info py-2">
+            drag and drop the image on the bottom row to one of the tiers
+          </div>
+        ) : null}
+
+        <div className="position-relative" style={{ minHeight: 300 }}>
+          <Board tierList={tierList} />
+          {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
+            <CountdownOverlay seconds={secondsUntilStart} />
+          )}
+        </div>
+        {tierList && (
+          <div className="mt-4">
+            <VotingResults tierList={tierList} />
           </div>
         )}
-        {!tierList?.pendingVoteItemId && !tierList?.currentVoteItemId ? (
-          <p>Waiting for admin to start the next round.</p>
-        ) : null}
-        {isOwner ? (
-          <p>
-            <button
-              onClick={forceEnd}
-              className="btn btn-sm btn-secondary me-3"
-              disabled={!tierList?.currentVoteItemId}
-            >
-              force end round
-            </button>
-
-            <button
-              onClick={startNext}
-              className="btn btn-sm btn-secondary"
-              disabled={
-                !!tierList?.currentVoteItemId ||
-                !!tierList?.pendingVoteItemId ||
-                !tierList?.inProgress
-              }
-            >
-              start next round
-            </button>
-          </p>
-        ) : null}
+        {/* Vote Toasts */}
+        <VoteToasts toasts={voteToasts} />
+        {/* <TierListDebugInfo tierList={tierList} /> */}
       </div>
-
-      {tierList?.currentVoteItemId ? (
-        <div className="alert alert-info py-2">
-          drag and drop the image on the bottom row to one of the tiers
-        </div>
-      ) : null}
-
-      <div className="position-relative" style={{ minHeight: 300 }}>
-        <Board tierList={tierList} />
-        {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
-          <CountdownOverlay seconds={secondsUntilStart} />
-        )}
-      </div>
-      {tierList && (
-        <div className="mt-4">
-          <VotingResults tierList={tierList} />
-        </div>
-      )}
-      {/* Vote Toasts */}
-      <VoteToasts toasts={voteToasts} />
-      {/* <TierListDebugInfo tierList={tierList} /> */}
-    </div>
+      <ChatPanel listId={tierList?.id} />
+    </>
   );
 }

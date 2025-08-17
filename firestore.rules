@@ -27,6 +27,18 @@ service cloud.firestore {
 					&& request.resource.data.listId == listId
 					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
 			}
+
+			// Messages subcollection for chat
+			match /messages/{msgId} {
+				allow read: if isSignedIn();
+				allow create: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','text','createdAt'])
+					&& request.resource.data.text is string
+					&& request.resource.data.text.size() > 0
+					&& request.resource.data.userName is string || request.resource.data.userName == null
+					&& request.resource.data.photoURL is string || request.resource.data.photoURL == null;
+			}
 		}
 
 		// Legacy camel-case parent for existing votes logic
@@ -43,6 +55,18 @@ service cloud.firestore {
 					&& request.resource.data.userId == request.auth.uid
 					&& request.resource.data.listId == listId
 					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
+			}
+
+			// Messages subcollection for chat (legacy camel-case parent)
+			match /messages/{msgId} {
+				allow read: if isSignedIn();
+				allow create: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','text','createdAt'])
+					&& request.resource.data.text is string
+					&& request.resource.data.text.size() > 0
+					&& (request.resource.data.userName is string || request.resource.data.userName == null)
+					&& (request.resource.data.photoURL is string || request.resource.data.photoURL == null);
 			}
 		}
 

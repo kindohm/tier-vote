@@ -4,11 +4,14 @@
   --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
     "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
-
+  
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-
+  
+  /* Chat panel custom properties */
+  --chat-panel-width: 300px;
+  
   --primary-glow: conic-gradient(
     from 180deg at 50% 50%,
     #16abff33 0deg,
@@ -155,5 +158,26 @@ a {
 @media (prefers-color-scheme: dark) {
   .logo-tierlist {
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+  }
+}
+
+/* Chat Panel Styles */
+.chat-panel-expanded {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-panel-collapsed:hover {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure main content doesn't get hidden behind the chat panel */
+@media (min-width: 768px) {
+  .container {
+    max-width: calc(100% - 40px);
+    transition: max-width 0.3s ease-in-out;
+  }
+
+  .chat-panel-expanded ~ .container {
+    max-width: calc(100% - 300px);
   }
 }
