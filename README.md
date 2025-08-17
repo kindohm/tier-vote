@@ -1,6 +1,5 @@
 # tier-vote
 
-
 ## Code Contribution
 
 Thanks for your interest in contributing to tier-vote! Please follow these guidelines to make collaboration smooth.
