@@ -1,10 +1,32 @@
 # tier-vote
 
+## Code Contribution
+
+Thanks for your interest in contributing to tier-vote! Please follow these guidelines to make collaboration smooth.
+
+- Fork the repository and create a feature branch from `main` using a descriptive name (e.g. `feature/chat-panel`).
+- Keep changes focused and split large work into multiple small PRs when possible.
+- Follow the existing TypeScript + React patterns used in this repo:
+  - Data access and real-time subscriptions live in `src/lib/` as hooks (e.g. `useVotes.ts`, `useChat.ts`).
+  - Reusable UI lives in `src/components/` and uses Bootstrap + CSS modules or global styles.
+  - Pages use the Next.js App Router under `src/app/`.
+- Include type definitions for new public functions/components and prefer explicit prop types.
+- Run the app locally to verify changes:
+
 ```
 yarn
 yarn dev
 ```
 
-### todo
+- If you add or modify Firestore security rules, update `firestore.rules` in the repo and include a short explanation in your PR. Deploying rules to the Firebase project is a separate step.
 
-- UX is trash
+- Tests and linting:
+  - If you add tests, include them close to the code being tested (in the same directory) 
+  and ensure they pass locally.
+
+- PR checklist:
+  - Describe the problem and solution in the PR description.
+  - Link any related issues.
+  - Mention any manual steps needed to verify (e.g., deploy Firestore rules).
+
+We appreciate clear commit messages and thoughtful code reviews. Thanks for helping improve tier-vote!
