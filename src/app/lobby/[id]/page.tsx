@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { add } from "date-fns";
 import { Title } from "@/components/Title";
+import { ChatPanel } from '@/components/chat/ChatPanel';
 
 export default function Page() {
   const params = useParams();
@@ -74,6 +75,8 @@ export default function Page() {
         })}
       </ul>
       {/* <TierListDebugInfo tierList={tierList} /> */}
+
+      {tierList?.id && <ChatPanel listId={tierList.id} />}
     </div>
   );
 }
