@@ -3,7 +3,6 @@ import {
   SnapshotOptions,
   collection,
   doc,
-  getDoc,
   limit,
   query,
   setDoc,
@@ -13,17 +12,6 @@ import { getDb } from "./getDb";
 import { TierList } from "./types";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { COLLECTION_NAME } from "./constants";
-
-// // consider using a converter
-// // // from:
-// // https://medium.com/swlh/using-firestore-with-typescript-65bd2a602945
-// export const getTierList = async (id: string) => {
-//   const db = getDb();
-//   const snap = await getDoc(
-//     doc(db, COLLECTION_NAME, id).withConverter(converter)
-//   );
-//   return snap.data() as TierList;
-// };
 
 export const updateTierList = async (id: string, newDoc: TierList) => {
   const db = getDb();
@@ -88,6 +76,7 @@ export const useAdminsInfo = () => {
   // include idField so we can fallback to snapshot id
   // @ts-expect-error idField option not typed in our setup
   const x = useCollectionData(q, { idField: "id" });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return x[0]?.map((a: any) => ({
     id: a.userId || a.id,
     name: a.displayName || a.userId || a.id,

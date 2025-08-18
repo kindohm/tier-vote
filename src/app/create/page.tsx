@@ -98,8 +98,8 @@ export default function Page() {
     };
   };
 
-  // @ts-expect-error
-  const handleChangeStatus = ({ meta, file }, status) => {
+  // @ts-expect-error it is ok
+  const handleChangeStatus = ({ meta }, status) => {
     // console.log(status, meta, file);
     setProgress(`${status} ${meta.name}`);
   };
@@ -111,9 +111,9 @@ export default function Page() {
   ) => {
     allFiles.forEach((f) => f.remove());
 
-    // @ts-expect-error
+    // @ts-expect-error it is ok
     setPaths(files.map((f) => f.meta.realPath));
-    // @ts-expect-error
+    // @ts-expect-error it is ok
     await create(files.map((f) => f.meta.realPath));
   };
 

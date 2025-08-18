@@ -250,6 +250,7 @@ export const VotingResults = ({ tierList }: Props) => {
                           const key = `${item.id}__${v.userId}`;
                           const expanded = expandedVoteKey === key;
                           let ts: string | undefined;
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           const raw = (v as any).createdAt;
                           try {
                             if (raw && typeof raw.toDate === "function") {
@@ -271,7 +272,7 @@ export const VotingResults = ({ tierList }: Props) => {
                                     minute: "2-digit",
                                   });
                             }
-                          } catch (_) {
+                          } catch {
                             // ignore formatting issues
                           }
                           return (
