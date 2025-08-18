@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --passWithNoTests"
+    "test": "jest"
   },
   "dependencies": {
     "aws-sdk": "^2.1511.0",
