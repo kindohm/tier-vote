@@ -30,8 +30,10 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
+    "eslint-plugin-react-refresh": "^0.4.20",
     "typescript": "^5"
   },
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"

@@ -4,6 +4,7 @@ export function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const randItem = (arr: any[]) => {
   return arr[randInt(0, arr.length - 1)];
 };

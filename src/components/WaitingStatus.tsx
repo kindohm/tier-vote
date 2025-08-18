@@ -15,7 +15,7 @@ export const WaitingStatus: React.FC<WaitingStatusProps> = ({
   votesForCurrentItem,
   className = "",
 }) => {
-  const { waitingCount, waitingUsers, participants, voterSet } = useMemo(() => {
+  const { waitingCount, participants, voterSet } = useMemo(() => {
     if (!tierList?.currentVoteItemId) {
       return {
         waitingCount: 0,
@@ -28,6 +28,7 @@ export const WaitingStatus: React.FC<WaitingStatusProps> = ({
       new Set(tierList.users.map((u) => u.id).filter(Boolean))
     );
     const voterIds = new Set(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       votesForCurrentItem.map((v: any) => v.userId).filter(Boolean)
     );
     const waitingIds = participantIds.filter((id) => !voterIds.has(id));
