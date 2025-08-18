@@ -1,6 +1,5 @@
 "use client";
 
-import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { Title } from "@/components/Title";
 import { Board } from "@/components/board/Board";
 import { VotingResults } from "@/components/votingResults/VotingResults";

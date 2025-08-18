@@ -1,11 +1,10 @@
 "use client";
 
 import { Board } from "@/components/board/Board";
-import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { useTierList } from "@/lib/useTierList";
 import { useUser } from "@/lib/useUser";
 import { useParams, useRouter } from "next/navigation";
-import { useInterval, useTimeout } from "usehooks-ts";
+import { useInterval } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
 import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data";

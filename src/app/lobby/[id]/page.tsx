@@ -1,13 +1,10 @@
 "use client";
 
-import { TierListDebugInfo } from "@/components/TierListDebugInfo";
 import { updateTierList } from "@/lib/data";
 import { useTierList } from "@/lib/useTierList";
 import { useUser } from "@/lib/useUser";
-import { randItem } from "@/lib/util";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { add } from "date-fns";
 import { Title } from "@/components/Title";
 import { ChatPanel } from '@/components/chat/ChatPanel';
 
@@ -30,16 +27,15 @@ export default function Page() {
       });
       updateTierList(id as string, { ...tierList, users: newUsers });
     }
-  }, [user, tierList]);
+  }, [user, tierList, id]);
 
   useEffect(() => {
     if (tierList?.inProgress) {
       router.push(`/voting/${tierList.id}`);
     }
-  }, [tierList?.inProgress]);
+  }, [tierList?.inProgress, router, tierList?.id]);
 
   const beginVotingClick = async () => {
-    const item = randItem(tierList.items.filter((i) => !i.tier));
     await updateTierList(id as string, {
       ...tierList,
       inProgress: true,

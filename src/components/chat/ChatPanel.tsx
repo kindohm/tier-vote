@@ -83,7 +83,7 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
     inputRef.current?.focus();
 
     try {
-      const docId = await sendMessageToList(listId, user ? { uid: user.uid, displayName: user.displayName, photoURL: user.photoURL } : null, text, clientId);
+      await sendMessageToList(listId, user ? { uid: user.uid, displayName: user.displayName, photoURL: user.photoURL } : null, text, clientId);
       // remove optimistic message; the persisted message will include clientId and be visible via subscription
       setOptimisticMessages((prev) => prev.filter((pm) => pm.clientId !== clientId));
     } catch (err) {
