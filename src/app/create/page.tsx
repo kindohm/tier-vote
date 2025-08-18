@@ -98,7 +98,6 @@ export default function Page() {
     };
   };
 
-  // @ts-expect-error it is ok
   const handleChangeStatus = ({ meta }, status) => {
     // console.log(status, meta, file);
     setProgress(`${status} ${meta.name}`);

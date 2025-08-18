@@ -5,6 +5,7 @@ This repository contains a Next.js application for managing tiered voting system
 ## code structure
 
 The code is organized into several key directories and files:
+
 - **`/pages`**: Contains the main application pages, including the home page and API routes.
 - **`/components`**: Houses reusable React components used across the application.
 - **`/styles`**: Contains global styles and CSS modules for component-specific styling.
@@ -24,3 +25,4 @@ When writing new components, follow the existing conventions for styling using B
 
 When adding new features or components, ensure that they follow the existing styling conventions using Bootstrap and CSS modules. Also, make sure to include appropriate types for TypeScript.
 
+Never, _ever_ use Typescript "as" keyword to cast types. Instead, use type guards or type assertions where necessary. This helps maintain type safety and clarity in the codebase.
