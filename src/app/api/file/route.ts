@@ -28,7 +28,6 @@ const uploadFile = async (path: string, buffer: Buffer) => {
           console.error(err);
           reject(err);
         }
-        console.log("success uploading to DOS");
         resolve({ ...data, path });
       }
     );
@@ -37,7 +36,6 @@ const uploadFile = async (path: string, buffer: Buffer) => {
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("POST /api/file");
     const formData = await req.formData();
     const realPath = req.nextUrl.searchParams.get("realPath") ?? "fail";
 

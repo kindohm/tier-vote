@@ -4,9 +4,9 @@ import {
   doc,
   onSnapshot,
   query,
-  setDoc,
   where,
   serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { getDb } from "./getDb";
 import { Vote } from "./types";
@@ -84,11 +84,30 @@ export async function castVote(params: {
   // Use deterministic doc id to allow overwriting (userId+itemId)
   const voteId = `${itemId}__${userId}`;
   const voteRef = doc(votesCol, voteId);
-  await setDoc(voteRef, {
+
+  // Add participant to participants subcollection (idempotent)
+  const participantsCol = collection(db, "tierLists", listId, "participants");
+  const participantRef = doc(participantsCol, userId);
+
+  // Use a batch to ensure both operations succeed together
+  const batch = writeBatch(db);
+
+  batch.set(voteRef, {
     listId,
     itemId,
     userId,
     tier,
     createdAt: serverTimestamp(),
   });
+
+  batch.set(
+    participantRef,
+    {
+      userId,
+      firstParticipatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  ); // merge: true ensures we don't overwrite if already exists
+
+  await batch.commit();
 }
