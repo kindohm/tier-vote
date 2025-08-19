@@ -66,8 +66,6 @@ export function useParticipatedTierLists(userId?: string) {
           }
         }
 
-        console.log(">>> fetched", fetched);
-
         fetched.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
         if (!cancelled) {
           setLists(fetched);

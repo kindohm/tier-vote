@@ -23,8 +23,6 @@ export const MainPage = () => {
     user?.uid
   );
 
-  console.log(">>> participatedLists", participatedLists);
-
   const codeChanged = (e: { target: { value: SetStateAction<string> } }) => {
     setCode(e.target.value);
   };
