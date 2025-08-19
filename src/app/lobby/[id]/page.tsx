@@ -1,12 +1,12 @@
 "use client";
 
-import { updateTierList } from "@/lib/data";
-import { useTierList } from "@/lib/useTierList";
-import { useUser } from "@/lib/useUser";
+import { updateTierList } from "@/lib/data/data";
+import { useTierList } from "@/lib/data/useTierList";
+import { useUser } from "@/lib/data/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Title } from "@/components/Title";
-import { ChatPanel } from '@/components/chat/ChatPanel';
+import { ChatPanel } from "@/components/chat/ChatPanel";
 
 export default function Page() {
   const params = useParams();

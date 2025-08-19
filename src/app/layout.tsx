@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getAppAuth } from "@/lib/getAppAuth";
+import { getAppAuth } from "@/lib/data/getAppAuth";
 
 import "bootstrap/dist/css/bootstrap.css";
 import BootstrapClient from "@/components/BootstrapClient";

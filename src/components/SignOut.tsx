@@ -1,4 +1,4 @@
-import { getAppAuth } from "../lib/getAppAuth";
+import { getAppAuth } from "@/lib/data/getAppAuth";
 
 export const SignOut = () => {
   const auth = getAppAuth();

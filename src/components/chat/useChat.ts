@@ -7,7 +7,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { getDb } from "./getDb";
+import { getDb } from "@/lib/data/getDb";
 
 export type ChatMessageDoc = {
   id: string;

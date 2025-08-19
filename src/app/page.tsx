@@ -1,13 +1,13 @@
 "use client";
 
 import { SetStateAction, useState } from "react";
-import { useUser } from "@/lib/useUser";
-import { useAdmins, useAdminsInfo, useTierListsByUser } from "@/lib/data";
+import { useUser } from "@/lib/data/useUser";
+import { useAdmins, useAdminsInfo, useTierListsByUser } from "@/lib/data/data";
 import { useParticipatedTierLists } from "@/hooks/useParticipatedTierListCount";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { NotSignedIn } from "@/components/NotSignedIn";
-import { getDb } from "@/lib/getDb";
+import { getDb } from "@/lib/data/getDb";
 import { collection, deleteDoc, doc } from "firebase/firestore";
 
 export default function Home() {

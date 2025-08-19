@@ -1,8 +1,8 @@
 "use client";
 
 import { IMG_HOST } from "@/lib/constants";
-import { getDb } from "@/lib/getDb";
-import { useUser } from "@/lib/useUser";
+import { getDb } from "@/lib/data/getDb";
+import { useUser } from "@/lib/data/useUser";
 import { addDoc, collection } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { SetStateAction, useState } from "react";
@@ -14,7 +14,7 @@ import Dropzone, {
   IUploadParams,
 } from "react-dropzone-uploader";
 import { format } from "date-fns";
-import { useAdmins } from "@/lib/data";
+import { useAdmins } from "@/lib/data/data";
 
 const S3_FOLDER = "tierlist-images";
 
