@@ -8,7 +8,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getDb } from "./getDb";
-import { COLLECTION_NAME } from "./constants";
+import { COLLECTION_NAME } from "../constants";
 
 export type ChatMessageDoc = {
   id: string;
