@@ -1,14 +1,14 @@
 "use client";
 
 import { Board } from "@/components/board/Board";
-import { useTierList } from "@/lib/useTierList";
-import { useUser } from "@/lib/useUser";
+import { useTierList } from "@/lib/data/useTierList";
+import { useUser } from "@/lib/data/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { useInterval } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
 import { useState, useEffect, useRef } from "react";
-import { updateTierList } from "@/lib/data";
-import { useVotesForItem, VoteDoc } from "../../../lib/useVotes";
+import { updateTierList } from "@/lib/data/data";
+import { useVotesForItem, VoteDoc } from "@/lib/data/useVotes";
 import { randItem } from "@/lib/util";
 import { Title } from "@/components/Title";
 import { CountdownOverlay } from "@/components/CountdownOverlay";

@@ -4,7 +4,7 @@ import { TierItem, TierList } from "@/lib/data/types";
 import Image from "next/image";
 import { useDrag } from "react-dnd";
 import { useState, useEffect } from "react";
-import { useVotesForItem } from "../../lib/useVotes";
+import { useVotesForItem } from "@/lib/data/useVotes";
 
 type Props = {
   item: TierItem;

@@ -3,7 +3,7 @@ import { TierLetter } from "./TierLetter";
 import { RowItem } from "./RowItem";
 import { useDrop } from "react-dnd";
 import { useUser } from "@/lib/data/useUser";
-import { castVote, useUserVoteForItem } from "../../lib/useVotes";
+import { castVote, useUserVoteForItem } from "@/lib/data/useVotes";
 
 type Props = {
   tier?: string;

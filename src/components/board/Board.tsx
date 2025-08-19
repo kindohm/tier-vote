@@ -1,4 +1,4 @@
-import { TierList } from "@/lib/types";
+import { TierList } from "@/lib/data/types";
 import { Row } from "./Row";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
