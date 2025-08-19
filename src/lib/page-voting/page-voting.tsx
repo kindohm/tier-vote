@@ -1,6 +1,6 @@
 "use client";
 
-import { Board } from "@/components/board/Board";
+import { Board } from "@/lib/components/board/Board";
 import { useTierList } from "@/lib/data/useTierList";
 import { useUser } from "@/lib/data/useUser";
 import { useParams, useRouter } from "next/navigation";
@@ -10,13 +10,13 @@ import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data/data";
 import { useVotesForItem, VoteDoc } from "@/lib/data/useVotes";
 import { randItem } from "@/lib/util";
-import { Title } from "@/components/Title";
-import { CountdownOverlay } from "@/components/CountdownOverlay";
-import { RoundProgressBar } from "@/components/RoundProgressBar";
+import { Title } from "@/lib/components/Title";
+import { CountdownOverlay } from "@/lib/components/CountdownOverlay";
+import { RoundProgressBar } from "@/lib/components/RoundProgressBar";
 import { VoteToasts, VoteToast } from "./components/VoteToasts";
-import { WaitingStatus } from "@/components/WaitingStatus";
-import { VotingResults } from "@/components/votingResults/VotingResults";
-import { ChatPanel } from "@/components/chat/ChatPanel";
+import { WaitingStatus } from "@/lib/components/WaitingStatus";
+import { VotingResults } from "@/lib/components/votingResults/VotingResults";
+import { ChatPanel } from "@/lib/components/chat/ChatPanel";
 
 export const VotingPage = () => {
   const params = useParams();

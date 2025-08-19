@@ -5,8 +5,8 @@ import { useTierList } from "@/lib/data/useTierList";
 import { useUser } from "@/lib/data/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Title } from "@/components/Title";
-import { ChatPanel } from "@/components/chat/ChatPanel";
+import { Title } from "@/lib/components/Title";
+import { ChatPanel } from "@/lib/components/chat/ChatPanel";
 
 export const LobbyPage = () => {
   const params = useParams();

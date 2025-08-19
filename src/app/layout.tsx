@@ -4,9 +4,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { getAppAuth } from "@/lib/data/getAppAuth";
 
 import "bootstrap/dist/css/bootstrap.css";
-import BootstrapClient from "@/components/BootstrapClient";
-import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
+import BootstrapClient from "@/lib/components/BootstrapClient";
+import { Nav } from "@/lib/components/Nav";
+import { Footer } from "@/lib/components/Footer";
 export default function RootLayout({
   children,
 }: {

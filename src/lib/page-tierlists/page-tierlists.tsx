@@ -1,14 +1,14 @@
 "use client";
 
-import { Title } from "@/components/Title";
-import { Board } from "@/components/board/Board";
-import { VotingResults } from "@/components/votingResults/VotingResults";
+import { Title } from "@/lib/components/Title";
+import { Board } from "@/lib/components/board/Board";
+import { VotingResults } from "@/lib/components/votingResults/VotingResults";
 import { IMG_HOST } from "@/lib/constants";
 import { TierItem } from "@/lib/data/types";
 import { useTierList } from "@/lib/data/useTierList";
 import { useUser } from "@/lib/data/useUser";
 import { useParams } from "next/navigation";
-import { ChatPanel } from "@/components/chat/ChatPanel";
+import { ChatPanel } from "@/lib/components/chat/ChatPanel";
 
 export const TierListPage = () => {
   const params = useParams();
