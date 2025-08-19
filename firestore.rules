@@ -28,6 +28,15 @@ service cloud.firestore {
 					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
 			}
 
+			// Participants subcollection - tracks who has voted in this list
+			match /participants/{userId} {
+				allow read: if isSignedIn();
+				allow create, update: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','firstParticipatedAt']);
+			}
+
 			// Messages subcollection for chat
 			match /messages/{msgId} {
 				allow read: if isSignedIn();
@@ -57,6 +66,15 @@ service cloud.firestore {
 					&& request.resource.data.keys().hasAll(['userId','tier','listId','itemId']);
 			}
 
+			// Participants subcollection - tracks who has voted in this list (legacy path)
+			match /participants/{userId} {
+				allow read: if isSignedIn();
+				allow create, update: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','firstParticipatedAt']);
+			}
+
 			// Messages subcollection for chat (legacy camel-case parent)
 			match /messages/{msgId} {
 				allow read: if isSignedIn();
@@ -79,6 +97,11 @@ service cloud.firestore {
 		// Generic collection group access for votes aggregation (read-only)
 		match /{path=**}/votes/{voteId} {
 			allow read: if isSignedIn();
+		}
+
+		// Collection group access for participants (for finding lists a user has participated in)
+		match /{path=**}/participants/{userId} {
+			allow read: if isSignedIn() && userId == request.auth.uid;
 		}
 	}
 }
