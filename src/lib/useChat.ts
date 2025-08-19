@@ -7,57 +7,59 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { getDb } from "@/lib/data/getDb";
-import { COLLECTION_NAME } from "@/lib/constants";
+import { getDb } from "./getDb";
+import { COLLECTION_NAME } from "./constants";
+
 export type ChatMessageDoc = {
   id: string;
   userId: string;
   userName?: string | null;
   photoURL?: string | null;
-  createdAt: number;
+  createdAt: number; // epoch ms
   text: string;
   clientId?: string | null;
 };
+
+// Subscribe to messages for a tier list (ordered ascending)
 export function useMessagesForList(listId?: string) {
   const [messages, setMessages] = useState<ChatMessageDoc[]>([]);
+
   useEffect(() => {
     if (!listId) {
       setMessages([]);
       return;
     }
+
     const db = getDb();
     const msgsRef = collection(db, COLLECTION_NAME, listId, "messages");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
     const unsub = onSnapshot(q, (snap) => {
       const data: ChatMessageDoc[] = [];
       snap.forEach((d) => {
-        const doc = d.data() as {
-          userId: string;
-          userName?: string | null;
-          photoURL?: string | null;
-          createdAt?: { toMillis?: () => number } | number;
-          text: string;
-          clientId?: string | null;
-        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const doc = d.data() as any;
         data.push({
           id: d.id,
           userId: doc.userId,
           userName: doc.userName || null,
           photoURL: doc.photoURL || null,
-          createdAt:
-            typeof doc.createdAt === "object" && doc.createdAt?.toMillis
-              ? doc.createdAt.toMillis()
-              : (doc.createdAt as number) || Date.now(),
+          createdAt: doc.createdAt?.toMillis
+            ? doc.createdAt.toMillis()
+            : doc.createdAt || Date.now(),
           text: doc.text,
           clientId: doc.clientId || null,
         });
       });
       setMessages(data);
     });
+
     return () => unsub();
   }, [listId]);
+
   return messages;
 }
+
+// Send a message to a specific list. Returns the new document id.
 export async function sendMessageToList(
   listId: string,
   user: {
@@ -71,6 +73,7 @@ export async function sendMessageToList(
   if (!listId) throw new Error("listId required");
   if (!user) throw new Error("user required");
   if (!text || !text.trim()) throw new Error("text required");
+
   const db = getDb();
   const msgsRef = collection(db, COLLECTION_NAME, listId, "messages");
   const docRef = await addDoc(msgsRef, {
@@ -81,5 +84,6 @@ export async function sendMessageToList(
     createdAt: serverTimestamp(),
     clientId: clientId || null,
   });
+
   return docRef.id;
 }

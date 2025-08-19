@@ -1,6 +1,6 @@
 "use client";
 
-import { IMG_HOST } from "@/lib/constants";
+import { IMG_HOST, COLLECTION_NAME } from "@/lib/constants";
 import { getDb } from "@/lib/data/getDb";
 import { useUser } from "@/lib/data/useUser";
 import { addDoc, collection } from "firebase/firestore";

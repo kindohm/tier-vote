@@ -9,6 +9,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { getDb } from "@/lib/data/getDb";
+import { COLLECTION_NAME } from "@/lib/constants";
 import { TierList } from "@/lib/data/types";
 import { converter } from "@/lib/data/data";
 
@@ -44,7 +45,7 @@ export function useParticipatedTierLists(userId?: string) {
         snap.forEach((d) => {
           // Extract list ID from the document path: tierLists/{listId}/participants/{userId}
           const pathParts = d.ref.path.split("/");
-          if (pathParts.length >= 2 && pathParts[0] === "tierLists") {
+          if (pathParts.length >= 2 && pathParts[0] === COLLECTION_NAME) {
             listIds.add(pathParts[1]);
           }
         });
@@ -52,13 +53,15 @@ export function useParticipatedTierLists(userId?: string) {
         const fetched: TierList[] = [];
         for (const id of Array.from(listIds.values())) {
           // Try lowercase canonical path
-          let ref = doc(getDb(), "tierlists", id).withConverter(
+          let ref = doc(getDb(), COLLECTION_NAME, id).withConverter(
             converter as any
           );
           let ds = await getDoc(ref);
           if (!ds.exists()) {
             // try legacy path
-            ref = doc(getDb(), "tierLists", id).withConverter(converter as any);
+            ref = doc(getDb(), COLLECTION_NAME, id).withConverter(
+              converter as any
+            ); // keep legacy path for existing docs
             ds = await getDoc(ref);
           }
           if (ds.exists()) {
