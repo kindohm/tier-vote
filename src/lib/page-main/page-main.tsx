@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { NotSignedIn } from "@/lib/components/NotSignedIn";
 import { getDb } from "@/lib/data/getDb";
 import { collection, deleteDoc, doc } from "firebase/firestore";
+import { COLLECTION_NAME } from "@/lib/constants";
 import { CreatedTierLists } from "./components/CreatedTierLists";
 import { ParticipatedLists } from "./components/ParticipatedLists";
 
@@ -33,7 +34,7 @@ export const MainPage = () => {
 
   const handleDelete = async (id: string) => {
     const db = getDb();
-    const tierListRef = collection(db, "tierlists");
+    const tierListRef = collection(db, COLLECTION_NAME);
     const document = doc(tierListRef, id);
     deleteDoc(document);
   };

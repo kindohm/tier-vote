@@ -9,6 +9,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { getDb } from "./getDb";
+import { COLLECTION_NAME } from "../constants";
 import { Vote } from "./types";
 
 // Firestore vote document shape
@@ -28,7 +29,7 @@ export function useVotesForItem(listId?: string, itemId?: string) {
       return;
     }
     const db = getDb();
-    const votesCol = collection(db, "tierLists", listId, "votes");
+    const votesCol = collection(db, COLLECTION_NAME, listId, "votes");
     const q = query(votesCol, where("itemId", "==", itemId));
     const unsub = onSnapshot(q, (snap) => {
       const data: VoteDoc[] = [];
@@ -49,7 +50,7 @@ export function useAllVotesForList(listId?: string) {
       return;
     }
     const db = getDb();
-    const votesCol = collection(db, "tierLists", listId, "votes");
+    const votesCol = collection(db, COLLECTION_NAME, listId, "votes");
     const q = query(votesCol);
     const unsub = onSnapshot(q, (snap) => {
       const data: VoteDoc[] = [];
@@ -80,13 +81,18 @@ export async function castVote(params: {
 }) {
   const { listId, itemId, userId, tier } = params;
   const db = getDb();
-  const votesCol = collection(db, "tierLists", listId, "votes");
+  const votesCol = collection(db, COLLECTION_NAME, listId, "votes");
   // Use deterministic doc id to allow overwriting (userId+itemId)
   const voteId = `${itemId}__${userId}`;
   const voteRef = doc(votesCol, voteId);
 
   // Add participant to participants subcollection (idempotent)
-  const participantsCol = collection(db, "tierLists", listId, "participants");
+  const participantsCol = collection(
+    db,
+    COLLECTION_NAME,
+    listId,
+    "participants"
+  );
   const participantRef = doc(participantsCol, userId);
 
   // Use a batch to ensure both operations succeed together
