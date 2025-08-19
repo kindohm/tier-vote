@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { TierList } from "@/lib/types";
-import { VoteDoc } from "@/lib/useVotes";
+import { TierList } from "@/lib/data/types";
+import { VoteDoc } from "@/lib/data/useVotes";
 
 interface WaitingStatusProps {
   tierList: TierList | undefined;

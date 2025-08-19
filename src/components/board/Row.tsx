@@ -1,8 +1,8 @@
-import { TierItem, TierList } from "@/lib/types";
+import { TierItem, TierList } from "@/lib/data/types";
 import { TierLetter } from "./TierLetter";
 import { RowItem } from "./RowItem";
 import { useDrop } from "react-dnd";
-import { useUser } from "@/lib/useUser";
+import { useUser } from "@/lib/data/useUser";
 import { castVote, useUserVoteForItem } from "../../lib/useVotes";
 
 type Props = {

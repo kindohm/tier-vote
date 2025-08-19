@@ -1,4 +1,4 @@
-import { TierList } from "@/lib/types";
+import { TierList } from "@/lib/data/types";
 
 export const TierListDebugInfo = ({
   tierList,

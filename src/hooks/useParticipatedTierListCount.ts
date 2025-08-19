@@ -8,9 +8,9 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { getDb } from "@/lib/getDb";
-import { TierList } from "@/lib/types";
-import { converter } from "@/lib/data";
+import { getDb } from "@/lib/data/getDb";
+import { TierList } from "@/lib/data/types";
+import { converter } from "@/lib/data/data";
 
 // Returns array of TierLists the user has votes in (distinct, newest first)
 export function useParticipatedTierLists(userId?: string) {

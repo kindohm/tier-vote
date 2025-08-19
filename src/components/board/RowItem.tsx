@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IMG_HOST } from "@/lib/constants";
-import { TierItem, TierList } from "@/lib/types";
+import { TierItem, TierList } from "@/lib/data/types";
 import Image from "next/image";
 import { useDrag } from "react-dnd";
 import { useState, useEffect } from "react";

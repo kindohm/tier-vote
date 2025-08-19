@@ -1,6 +1,6 @@
 import { useState, useRef, FormEvent, useEffect } from "react";
-import { useMessagesForList, sendMessageToList } from "@/lib/useChat";
-import { useUser } from "@/lib/useUser";
+import { useMessagesForList, sendMessageToList } from "@/components/chat/useChat";
+import { useUser } from "@/lib/data/useUser";
 
 type ChatMessage = {
   id: string;

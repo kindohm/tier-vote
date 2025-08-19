@@ -1,7 +1,7 @@
-import { useUser } from "@/lib/useUser";
+import { useUser } from "@/lib/data/useUser";
 import { SignIn } from "./SignIn";
 import { SignOut } from "./SignOut";
-import { useAdmins } from "@/lib/data";
+import { useAdmins } from "@/lib/data/data";
 import LogoTierList from "./LogoTierList";
 
 export const Nav = () => {
