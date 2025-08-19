@@ -7,24 +7,33 @@ This repository contains a Next.js application for managing tiered voting system
 The code is organized into several key directories and files:
 
 - **`/app`**: Contains the main application pages, including the home page and API routes.
-- **`/components`**: Houses _shared_ React components used across the application.
 - **`/styles`**: Contains global styles and CSS modules for component-specific styling.
 - **`/public`**: Contains static assets like images and icons.
-- **`/lib`**: Contains utility functions and Firebase configuration.
-- **`/hooks`**: Custom _shared_ React hooks for managing state and side effects.
+- **`/lib`**: Contains all app components, hooks, and utilities.
 
-### Individual /app page structure
+Note: the `/lib` folder holds the meat of the application. `/app` is nothing but a
+thin definition of routes.
 
-In an /app page, all of the page's components, hooks, and utilities related to that
-page should be stored inside of the page folder. For example, if we have a page called "foo":
+### /app and /lib structure
 
-- `src/app/foo/page.tsx`
-- `src/app/foo/components/`
-- `src/app/foo/hooks/`
-- `src/app/foo/lib`
+The routes under `src/app` are thin wrappers around actual page components and logic.
+For example, if there is an app route named "foo", we would expect this structure
 
-Note: the top level `src/components`, `src/hooks`, and `src/lib` folders
-_should only be used for items shared across the entire application_.
+- `src/app/foo/page.tsx`: a very thin wrapper that just renders a single `<FooPage />` component.
+- `src/lib/foo-page/foo-page.tsx`: the actual foo page. exports `<FooPage />`
+- `src/lib/foo-page/components`: holds any supporting components for FooPage.
+- `src/lib/foo-page/hooks`: holds any specific hooks for FooPage
+- `src/lib/foo-page/lib`: holds any specific utilities for FooPage
+
+### shared code
+
+All shared code shared by _multiple_ routes or pages lives in `src/lib/shared`.
+This could include utilities, components, hooks, or data-specific logic:
+
+- `src/lib/shared`
+- `src/lib/shared/components`
+- `src/lib/shared/hooks`
+- `src/lib/shared/lib`
 
 ## instructions for copilot
 
