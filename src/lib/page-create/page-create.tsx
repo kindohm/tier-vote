@@ -67,7 +67,7 @@ export const CreatePage = () => {
       modifiedAt: new Date(),
     }));
     const db = getDb();
-    const tierListRef = collection(db, "tierlists");
+    const tierListRef = collection(db, COLLECTION_NAME);
     const doc = {
       ...defaultTierList,
       title: name,
