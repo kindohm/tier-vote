@@ -6,6 +6,7 @@ import { getAppAuth } from "@/lib/getAppAuth";
 import "bootstrap/dist/css/bootstrap.css";
 import BootstrapClient from "@/components/BootstrapClient";
 import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 export default function RootLayout({
   children,
 }: {
@@ -19,7 +20,10 @@ export default function RootLayout({
         <title>Tier Vote</title>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         {/* Load Bootstrap Icons from CDN to avoid requiring a local package install */}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+        />
       </head>
       <body>
         {loading ? (
@@ -40,6 +44,7 @@ export default function RootLayout({
               <Nav />
             </header>
             <main>{children}</main>
+            <Footer />
           </div>
         )}
         <BootstrapClient />

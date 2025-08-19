@@ -6,13 +6,25 @@ This repository contains a Next.js application for managing tiered voting system
 
 The code is organized into several key directories and files:
 
-- **`/pages`**: Contains the main application pages, including the home page and API routes.
-- **`/components`**: Houses reusable React components used across the application.
+- **`/app`**: Contains the main application pages, including the home page and API routes.
+- **`/components`**: Houses _shared_ React components used across the application.
 - **`/styles`**: Contains global styles and CSS modules for component-specific styling.
 - **`/public`**: Contains static assets like images and icons.
-
 - **`/lib`**: Contains utility functions and Firebase configuration.
-- **`/hooks`**: Custom React hooks for managing state and side effects.
+- **`/hooks`**: Custom _shared_ React hooks for managing state and side effects.
+
+### Individual /app page structure
+
+In an /app page, all of the page's components, hooks, and utilities related to that
+page should be stored inside of the page folder. For example, if we have a page called "foo":
+
+- `src/app/foo/page.tsx`
+- `src/app/foo/components/`
+- `src/app/foo/hooks/`
+- `src/app/foo/lib`
+
+Note: the top level `src/components`, `src/hooks`, and `src/lib` folders
+_should only be used for items shared across the entire application_.
 
 ## instructions for copilot
 
