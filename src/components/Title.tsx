@@ -1,5 +1,5 @@
-import { updateTierList } from "@/lib/data";
-import { TierList } from "@/lib/types";
+import { updateTierList } from "@/lib/data/data";
+import { TierList } from "@/lib/data/types";
 import { User } from "firebase/auth";
 import { useParams } from "next/navigation";
 import EasyEdit from "react-easy-edit";

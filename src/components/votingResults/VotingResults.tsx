@@ -1,5 +1,5 @@
 import { IMG_HOST } from "@/lib/constants";
-import { TierList } from "@/lib/types";
+import { TierList } from "@/lib/data/types";
 import { useAllVotesForList, VoteDoc } from "../../lib/useVotes";
 import Image from "next/image";
 import { useMemo, useState, useCallback } from "react";

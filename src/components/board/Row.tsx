@@ -1,8 +1,8 @@
-import { TierItem, TierList } from "@/lib/types";
+import { TierItem, TierList } from "@/lib/data/types";
 import { TierLetter } from "./TierLetter";
 import { RowItem } from "./RowItem";
 import { useDrop } from "react-dnd";
-import { useUser } from "@/lib/useUser";
+import { useUser } from "@/lib/data/useUser";
 import { castVote, useUserVoteForItem } from "../../lib/useVotes";
 
 type Props = {
@@ -70,7 +70,7 @@ export const Row = ({ tier, tierList, unassigned }: Props) => {
   // i.e. once they have a vote recorded (votedTier truthy). Before first placement, keep row enabled.
   const showLocked = unassigned && voteInProgress && !!votedTier && isOver;
   return (
-  <div
+    <div
       ref={drop}
       style={{
         ...style,
@@ -78,7 +78,7 @@ export const Row = ({ tier, tierList, unassigned }: Props) => {
         opacity: showLocked ? 0.55 : 1,
         border: showLocked ? "2px dashed #999" : undefined,
         position: "relative",
-    background: showLocked ? "#333" : style.background,
+        background: showLocked ? "#333" : style.background,
         transition: "all .15s",
       }}
       title={
