@@ -6,7 +6,6 @@ interface Props {
   toasts: VoteToast[];
 }
 
-// Displays stacked transient vote notifications in the bottom-right corner.
 export const VoteToasts = ({ toasts }: Props) => {
   if (!toasts.length) return null;
   return (

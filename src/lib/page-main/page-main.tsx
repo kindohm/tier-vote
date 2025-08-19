@@ -6,10 +6,10 @@ import { useAdmins, useAdminsInfo, useTierListsByUser } from "@/lib/data/data";
 import { useParticipatedTierLists } from "@/hooks/useParticipatedTierListCount";
 import { useRouter } from "next/navigation";
 import { NotSignedIn } from "@/components/NotSignedIn";
-import { ParticipatedLists } from "./components/ParticipatedLists";
-import { CreatedTierLists } from "./components/CreatedTierLists";
 import { getDb } from "@/lib/data/getDb";
 import { collection, deleteDoc, doc } from "firebase/firestore";
+import { CreatedTierLists } from "./components/CreatedTierLists";
+import { ParticipatedLists } from "./components/ParticipatedLists";
 
 export const MainPage = () => {
   const [code, setCode] = useState("");
