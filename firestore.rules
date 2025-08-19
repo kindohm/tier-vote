@@ -34,7 +34,8 @@ service cloud.firestore {
 				allow create, update: if isSignedIn()
 					&& request.resource.data.userId == request.auth.uid
 					&& userId == request.auth.uid
-					&& request.resource.data.keys().hasAll(['userId','firstParticipatedAt']);
+					&& request.resource.data.keys().hasAll(['userId'])
+					&& 'firstParticipatedAt' in request.resource.data;
 			}
 
 			// Messages subcollection for chat
@@ -72,7 +73,8 @@ service cloud.firestore {
 				allow create, update: if isSignedIn()
 					&& request.resource.data.userId == request.auth.uid
 					&& userId == request.auth.uid
-					&& request.resource.data.keys().hasAll(['userId','firstParticipatedAt']);
+					&& request.resource.data.keys().hasAll(['userId'])
+					&& 'firstParticipatedAt' in request.resource.data;
 			}
 
 			// Messages subcollection for chat (legacy camel-case parent)
@@ -101,7 +103,7 @@ service cloud.firestore {
 
 		// Collection group access for participants (for finding lists a user has participated in)
 		match /{path=**}/participants/{userId} {
-			allow read: if isSignedIn() && userId == request.auth.uid;
+			allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
 		}
 	}
 }
