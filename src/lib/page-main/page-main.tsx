@@ -3,7 +3,7 @@
 import { SetStateAction, useState } from "react";
 import { useUser } from "@/lib/data/useUser";
 import { useAdmins, useAdminsInfo, useTierListsByUser } from "@/lib/data/data";
-import { useParticipatedTierLists } from "@/hooks/useParticipatedTierListCount";
+import { useParticipatedTierLists } from "./hooks/useParticipatedTierLists";
 import { useRouter } from "next/navigation";
 import { NotSignedIn } from "@/components/NotSignedIn";
 import { getDb } from "@/lib/data/getDb";
