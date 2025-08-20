@@ -7,7 +7,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "kindohm.nyc3.digitaloceanspaces.com",
+        hostname: process.env["NEXT_PUBLIC_IMG_HOST"],
         port: "",
         pathname: "/tierlist-images/**",
       },
