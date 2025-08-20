@@ -8,6 +8,7 @@ import { useInterval } from "usehooks-ts";
 import { add, differenceInSeconds } from "date-fns";
 import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data/data";
+import { TierItem } from "@/lib/data/types";
 import { useVotesForItem, VoteDoc } from "@/lib/data/useVotes";
 import { randItem } from "@/lib/util";
 import { Title } from "@/lib/components/Title";
@@ -17,6 +18,7 @@ import { VoteToasts, VoteToast } from "./components/VoteToasts";
 import { WaitingStatus } from "@/lib/components/WaitingStatus";
 import { VotingResults } from "@/lib/components/votingResults/VotingResults";
 import { ChatPanel } from "@/lib/components/chat/ChatPanel";
+import { VoteOutcomeOverlay } from "./components/VoteOutcomeOverlay";
 
 export const VotingPage = () => {
   const params = useParams();
@@ -38,6 +40,8 @@ export const VotingPage = () => {
   const router = useRouter();
   const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
   const voteTiersRef = useRef<Map<string, string | null>>(new Map());
+  const [showOutcome, setShowOutcome] = useState(false);
+  const [lastVotedItem, setLastVotedItem] = useState<TierItem | null>(null);
 
   useEffect(() => {
     voteTiersRef.current = new Map();
@@ -128,9 +132,16 @@ export const VotingPage = () => {
       })
       .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
-    const newItems = tierList.items.map((i) =>
-      i.id === tierList.currentVoteItemId ? { ...i, tier: totals.tier } : i
-    );
+    const newItems = tierList.items.map((i) => {
+      if (i.id === tierList.currentVoteItemId) {
+        const updatedItem = { ...i, tier: totals.tier };
+        setLastVotedItem(updatedItem);
+        setShowOutcome(true);
+        setTimeout(() => setShowOutcome(false), 13000); // Hide after 3 seconds
+        return updatedItem;
+      }
+      return i;
+    });
 
     const inProgress = !!newItems.find((i) => !i.tier);
     const closed = !inProgress;
@@ -228,6 +239,9 @@ export const VotingPage = () => {
           <Board tierList={tierList} />
           {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
             <CountdownOverlay seconds={secondsUntilStart} />
+          )}
+          {lastVotedItem && (
+            <VoteOutcomeOverlay item={lastVotedItem} show={showOutcome} />
           )}
         </div>
         {tierList && (
