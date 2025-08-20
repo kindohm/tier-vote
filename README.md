@@ -16,7 +16,7 @@ Thanks for your interest in contributing to tier-vote! Please follow these guide
 - Keep changes focused and split large work into multiple small PRs when possible.
 - Follow the existing TypeScript + React patterns used in this repo:
   - Data access and real-time subscriptions live in `src/lib/` as hooks (e.g. `useVotes.ts`, `useChat.ts`).
-  - Reusable UI lives in `src/components/` and uses Bootstrap + CSS modules or global styles.
+  - Reusable UI components live in `src/lib/components/` and use Bootstrap + CSS modules or global styles.
   - Pages use the Next.js App Router under `src/app/`.
 - Include type definitions for new public functions/components and prefer explicit prop types.
 - Run the app locally to verify changes:
