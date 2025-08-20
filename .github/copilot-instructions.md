@@ -27,13 +27,20 @@ For example, if there is an app route named "foo", we would expect this structur
 
 ### shared code
 
-All shared code shared by _multiple_ routes or pages lives in `src/lib/shared`.
-This could include utilities, components, hooks, or data-specific logic:
+Common utilities and hooks that are shared by _multiple_ routes or pages live in `src/lib` or `src/lib/shared`.
+Note that reusable components live in `src/lib/components` directory.
 
-- `src/lib/shared`
-- `src/lib/shared/components`
-- `src/lib/shared/hooks`
-- `src/lib/shared/lib`
+When using the `shared` directory, follow this structure:
+
+- `src/lib/shared` - shared utilities and hooks
+- `src/lib/shared/hooks` - shared hooks
+- `src/lib/shared/lib` - shared utilities and logic
+
+## other documentation
+
+Documentation about technical decisions, optimizations, and other architectural details can be found in the `docs` directory. This includes:
+
+- **`PARTICIPANT_OPTIMIZATION.md`**: Details on how participant tracking was optimized.
 
 ## instructions for copilot
 
