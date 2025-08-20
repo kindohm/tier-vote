@@ -10,6 +10,8 @@ jobs:
   ci:
     name: ci
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_IMG_HOST: https://whoop-whooop-blutcha.ceo
 
     steps:
       - name: Checkout
