@@ -2,18 +2,17 @@
 
 import { TierItem } from "@/lib/data/types";
 import { useEffect, useState } from "react";
+import { IMG_HOST } from "@/lib/constants";
 
 interface RoundEndOverlayProps {
   item: TierItem;
   winningTier: string;
-  onClose: () => void;
   show: boolean;
 }
 
 export const RoundEndOverlay = ({
   item,
   winningTier,
-  onClose,
   show,
 }: RoundEndOverlayProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -21,14 +20,10 @@ export const RoundEndOverlay = ({
   useEffect(() => {
     if (show) {
       setIsVisible(true);
-      // Auto-close after 4 seconds
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(onClose, 300); // Wait for fade out animation
-      }, 4000);
-      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
     }
-  }, [show, onClose]);
+  }, [show]);
 
   if (!show) return null;
 
@@ -51,29 +46,26 @@ export const RoundEndOverlay = ({
 
   return (
     <div
-      className={`position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center ${
+      className={`position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center ${
         isVisible ? "fade-in" : "fade-out"
       }`}
       style={{
         backgroundColor: "rgba(0, 0, 0, 0.85)",
-        zIndex: 9999,
+        zIndex: 1000,
         transition: "opacity 0.3s ease-in-out",
         opacity: isVisible ? 1 : 0,
-      }}
-      onClick={() => {
-        setIsVisible(false);
-        setTimeout(onClose, 300);
+        minHeight: "300px",
       }}
     >
       <div
         className="text-center text-white"
-        style={{ maxWidth: "90vw", maxHeight: "90vh" }}
+        style={{ maxWidth: "95%", maxHeight: "95%" }}
       >
         {/* "ROUND OVER" Header */}
         <h1
-          className="mb-4 fw-bold"
+          className="mb-2 fw-bold"
           style={{
-            fontSize: "3.5rem",
+            fontSize: "2rem",
             textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
             letterSpacing: "0.1em",
           }}
@@ -82,15 +74,15 @@ export const RoundEndOverlay = ({
         </h1>
 
         {/* Image Container */}
-        <div className="position-relative mb-3">
+        <div className="position-relative mb-2">
           {item.imageURL && (
             <img
-              src={item.imageURL}
+              src={`${IMG_HOST}/${decodeURIComponent(item.imageURL)}`}
               alt="Voted item"
               className="rounded shadow-lg"
               style={{
-                maxWidth: "60vw",
-                maxHeight: "50vh",
+                maxWidth: "200px",
+                maxHeight: "150px",
                 objectFit: "contain",
                 border: `6px solid ${getTierColor(winningTier)}`,
               }}
@@ -101,15 +93,15 @@ export const RoundEndOverlay = ({
           <div
             className="position-absolute d-flex align-items-center justify-content-center rounded-circle fw-bold"
             style={{
-              top: "-20px",
-              right: "-20px",
-              width: "120px",
-              height: "120px",
+              top: "-15px",
+              right: "-15px",
+              width: "60px",
+              height: "60px",
               backgroundColor: getTierColor(winningTier),
               color: "white",
-              fontSize: "4rem",
+              fontSize: "2rem",
               textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
-              border: "4px solid white",
+              border: "3px solid white",
               boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
             }}
           >
@@ -119,9 +111,9 @@ export const RoundEndOverlay = ({
 
         {/* Result Text */}
         <p
-          className="text-light mb-0"
+          className="text-light mb-1"
           style={{
-            fontSize: "1.5rem",
+            fontSize: "1.1rem",
             textShadow: "1px 1px 2px rgba(0,0,0,0.8)",
           }}
         >
@@ -131,15 +123,15 @@ export const RoundEndOverlay = ({
           </strong>
         </p>
 
-        {/* Click to close hint */}
+        {/* Waiting for next round hint */}
         <p
-          className="text-muted mt-3"
+          className="text-muted mt-2"
           style={{
-            fontSize: "0.9rem",
+            fontSize: "0.8rem",
             opacity: 0.7,
           }}
         >
-          Click anywhere to continue
+          Waiting for next round to start...
         </p>
       </div>
 

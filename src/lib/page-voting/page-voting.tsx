@@ -50,6 +50,27 @@ export const VotingPage = () => {
     voteTiersRef.current = new Map();
   }, [tierList?.currentVoteItemId]);
 
+  // Hide the round end overlay when a new round countdown starts
+  useEffect(() => {
+    if (tierList?.pendingVoteItemId && showRoundEndOverlay) {
+      setShowRoundEndOverlay(false);
+      setLastCompletedItem(null);
+    }
+  }, [tierList?.pendingVoteItemId, showRoundEndOverlay]);
+
+  // Handle redirect when voting is complete
+  useEffect(() => {
+    if (tierList && !tierList.inProgress && tierList.closed) {
+      const delay = showRoundEndOverlay ? 4000 : 1000;
+      const timer = setTimeout(() => {
+        console.log("Redirecting to /tierlists/" + tierList.id);
+        router.push(`/tierlists/${tierList.id}`);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [tierList, showRoundEndOverlay, router]);
+
   useEffect(() => {
     if (!tierList?.currentVoteItemId) return;
     const currentVotes = votesForCurrentItem;
@@ -170,12 +191,6 @@ export const VotingPage = () => {
     setRoundTotalSeconds(null);
   };
 
-  if (tierList && !tierList?.inProgress) {
-    setTimeout(() => {
-      router.push(`/tierlists/${tierList.id}`);
-    }, 1000);
-  }
-
   const startNext = async () => {
     const unvotedItems = tierList.items.filter((i) => !i.tier);
     const item = randItem(unvotedItems);
@@ -250,6 +265,14 @@ export const VotingPage = () => {
           {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
             <CountdownOverlay seconds={secondsUntilStart} />
           )}
+          {/* Round End Overlay */}
+          {showRoundEndOverlay && lastCompletedItem && (
+            <RoundEndOverlay
+              item={lastCompletedItem.item}
+              winningTier={lastCompletedItem.tier}
+              show={showRoundEndOverlay}
+            />
+          )}
         </div>
         {tierList && (
           <div className="mt-4">
@@ -257,19 +280,6 @@ export const VotingPage = () => {
           </div>
         )}
         <VoteToasts toasts={voteToasts} />
-        
-        {/* Round End Overlay */}
-        {showRoundEndOverlay && lastCompletedItem && (
-          <RoundEndOverlay
-            item={lastCompletedItem.item}
-            winningTier={lastCompletedItem.tier}
-            show={showRoundEndOverlay}
-            onClose={() => {
-              setShowRoundEndOverlay(false);
-              setLastCompletedItem(null);
-            }}
-          />
-        )}
       </div>
       <ChatPanel listId={tierList?.id} />
     </>
