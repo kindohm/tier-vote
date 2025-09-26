@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, FormEvent, useEffect } from "react";
+import React, { useState, useRef, FormEvent, useEffect, useMemo } from "react";
 import { useUser } from "@/lib/data/useUser";
 import {
   sendMessageToList,
@@ -54,26 +54,13 @@ function mapDoc(d: ChatMessageDoc): ChatMessage {
 export const ChatPanel = ({ listId }: { listId?: string }) => {
   const user = useUser();
   const rawMessages = useMessagesForList(listId);
-  const serverMessages: ChatMessage[] = rawMessages.map(mapDoc);
-
+  const serverMessages: ChatMessage[] = useMemo(() => rawMessages.map(mapDoc), [rawMessages]);
+  
   const [isExpanded, setIsExpanded] = useState(true);
   const [input, setInput] = useState("");
   const [optimistic, setOptimistic] = useState<ChatMessage[]>([]);
-
-  // Remove optimistic message once server copy (same clientId) arrives
-  useEffect(() => {
-    if (serverMessages.length === 0) return;
-    const ids = new Set(
-      serverMessages
-        .map((m) => m.clientId)
-        .filter((c): c is string => typeof c === "string" && c.length > 0)
-    );
-    if (ids.size === 0) return;
-    setOptimistic((prev) =>
-      prev.filter((o) => !o.clientId || !ids.has(o.clientId))
-    );
-  }, [serverMessages]);
-  const merged: ChatMessage[] = (() => {
+  
+  const merged: ChatMessage[] = useMemo(() => {
     const now = Date.now();
     const filtered = optimistic.filter((o) => {
       if (o.failed) return true;
@@ -89,7 +76,7 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
     const all = [...serverMessages, ...filtered];
     all.sort((a, b) => a.createdAt - b.createdAt);
     return all;
-  })();
+  }, [serverMessages, optimistic]);
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
