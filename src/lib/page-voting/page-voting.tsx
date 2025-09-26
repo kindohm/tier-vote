@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data/data";
 import { useVotesForItem, VoteDoc } from "@/lib/data/useVotes";
 import { randItem } from "@/lib/util";
+import { TierItem } from "@/lib/data/types";
 import { Title } from "@/lib/components/Title";
 import { CountdownOverlay } from "@/lib/components/CountdownOverlay";
 import { RoundProgressBar } from "@/lib/components/RoundProgressBar";
@@ -17,6 +18,7 @@ import { VoteToasts, VoteToast } from "./components/VoteToasts";
 import { WaitingStatus } from "@/lib/components/WaitingStatus";
 import { VotingResults } from "@/lib/components/votingResults/VotingResults";
 import { ChatPanel } from "@/lib/components/chat/ChatPanel";
+import { RoundEndOverlay } from "./components/RoundEndOverlay";
 
 export const VotingPage = () => {
   const params = useParams();
@@ -38,6 +40,11 @@ export const VotingPage = () => {
   const router = useRouter();
   const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
   const voteTiersRef = useRef<Map<string, string | null>>(new Map());
+  const [showRoundEndOverlay, setShowRoundEndOverlay] = useState(false);
+  const [lastCompletedItem, setLastCompletedItem] = useState<{
+    item: TierItem;
+    tier: string;
+  } | null>(null);
 
   useEffect(() => {
     voteTiersRef.current = new Map();
@@ -128,12 +135,26 @@ export const VotingPage = () => {
       })
       .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
+    // Find the item that was just voted on
+    const votedItem = tierList.items.find(
+      (item) => item.id === tierList.currentVoteItemId
+    );
+
     const newItems = tierList.items.map((i) =>
       i.id === tierList.currentVoteItemId ? { ...i, tier: totals.tier } : i
     );
 
     const inProgress = !!newItems.find((i) => !i.tier);
     const closed = !inProgress;
+
+    // Show the overlay with the completed item and its tier
+    if (votedItem) {
+      setLastCompletedItem({
+        item: votedItem,
+        tier: totals.tier,
+      });
+      setShowRoundEndOverlay(true);
+    }
 
     updateTierList(id as string, {
       ...tierList,
@@ -236,6 +257,19 @@ export const VotingPage = () => {
           </div>
         )}
         <VoteToasts toasts={voteToasts} />
+        
+        {/* Round End Overlay */}
+        {showRoundEndOverlay && lastCompletedItem && (
+          <RoundEndOverlay
+            item={lastCompletedItem.item}
+            winningTier={lastCompletedItem.tier}
+            show={showRoundEndOverlay}
+            onClose={() => {
+              setShowRoundEndOverlay(false);
+              setLastCompletedItem(null);
+            }}
+          />
+        )}
       </div>
       <ChatPanel listId={tierList?.id} />
     </>
