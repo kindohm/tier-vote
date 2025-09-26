@@ -54,12 +54,15 @@ function mapDoc(d: ChatMessageDoc): ChatMessage {
 export const ChatPanel = ({ listId }: { listId?: string }) => {
   const user = useUser();
   const rawMessages = useMessagesForList(listId);
-  const serverMessages: ChatMessage[] = useMemo(() => rawMessages.map(mapDoc), [rawMessages]);
-  
+  const serverMessages: ChatMessage[] = useMemo(
+    () => rawMessages.map(mapDoc),
+    [rawMessages]
+  );
+
   const [isExpanded, setIsExpanded] = useState(true);
   const [input, setInput] = useState("");
   const [optimistic, setOptimistic] = useState<ChatMessage[]>([]);
-  
+
   const merged: ChatMessage[] = useMemo(() => {
     const now = Date.now();
     const filtered = optimistic.filter((o) => {
@@ -141,6 +144,7 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
     if (!input.trim() || input.length > MAX_CHARS) return;
     void sendMessage(input);
   }
+
   return (
     <div
       className={`position-fixed end-0 bg-light border-start shadow ${
@@ -195,11 +199,25 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
                         alt={m.userName || m.userId}
                         className="rounded-circle"
                         style={{ width: 36, height: 36, objectFit: "cover" }}
+                        crossOrigin="anonymous"
+                        onError={(e) => {
+                          console.log("error!");
+                          // Hide the broken image and show initials instead
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget
+                            .nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
+                        }}
                       />
                     ) : (
                       <div
                         className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                        style={{ width: 36, height: 36, fontSize: 12 }}
+                        style={{
+                          width: 36,
+                          height: 36,
+                          fontSize: 12,
+                          display: m.photoURL ? "none" : "flex",
+                        }}
                       >
                         {initials(m.userName || m.userId)}
                       </div>
