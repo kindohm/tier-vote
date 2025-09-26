@@ -3,17 +3,21 @@
 import { TierItem } from "@/lib/data/types";
 import { useEffect, useState } from "react";
 import { IMG_HOST } from "@/lib/constants";
+import { EmojiButtons } from "@/lib/components/reactions/EmojiButtons";
+import type { EmojiType } from "@/lib/components/reactions/types";
 
 interface RoundEndOverlayProps {
   item: TierItem;
   winningTier: string;
   show: boolean;
+  onReaction?: (emoji: EmojiType) => void;
 }
 
 export const RoundEndOverlay = ({
   item,
   winningTier,
   show,
+  onReaction,
 }: RoundEndOverlayProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -122,6 +126,11 @@ export const RoundEndOverlay = ({
             {winningTier.toUpperCase()} Tier
           </strong>
         </p>
+
+        {/* Emoji Reaction Buttons */}
+        {onReaction && (
+          <EmojiButtons onReaction={onReaction} />
+        )}
 
         {/* Waiting for next round hint */}
         <p
