@@ -103,17 +103,22 @@ export const VotingPage = () => {
   // Watch for completed rounds (when lastVoteItemId changes) and show overlay for all users
   useEffect(() => {
     if (!tierList?.lastVoteItemId) return;
-    
+
     // Skip if we've already processed this round
     if (lastProcessedRoundRef.current === tierList.lastVoteItemId) return;
-    
+
     // Find the item that was just completed
     const completedItem = tierList.items.find(
       (item) => item.id === tierList.lastVoteItemId
     );
-    
+
     if (completedItem && completedItem.tier && !showRoundEndOverlay) {
-      console.log('Detected completed round via Firebase update - showing overlay for item:', completedItem.id, 'tier:', completedItem.tier);
+      console.log(
+        "Detected completed round via Firebase update - showing overlay for item:",
+        completedItem.id,
+        "tier:",
+        completedItem.tier
+      );
       lastProcessedRoundRef.current = tierList.lastVoteItemId;
       setLastCompletedItem({
         item: completedItem,
@@ -179,7 +184,9 @@ export const VotingPage = () => {
   const forceEnd = () => {
     // Capture the current vote item ID immediately to avoid race conditions
     const currentVoteItemId = tierList.currentVoteItemId;
-    
+
+    // TODO: extract this into its own file/function so that
+    // the ranking/calculation strategy is clear and easy to maintain
     const totals = tierList.tiers
       .map((tier) => {
         const votesFor = votesForCurrentItem.filter(
@@ -214,16 +221,16 @@ export const VotingPage = () => {
 
   const handleReaction = async (emoji: EmojiType) => {
     if (!user || !id) return;
-    
+
     try {
       await sendReaction(
         emoji,
         user.uid,
-        user.displayName || undefined,
+        user.displayName || undefined
         // Could track round number here if needed
       );
     } catch (error) {
-      console.error('Failed to send reaction:', error);
+      console.error("Failed to send reaction:", error);
     }
   };
 
