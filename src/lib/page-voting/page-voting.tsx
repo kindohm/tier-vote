@@ -19,6 +19,9 @@ import { WaitingStatus } from "@/lib/components/WaitingStatus";
 import { VotingResults } from "@/lib/components/votingResults/VotingResults";
 import { ChatPanel } from "@/lib/components/chat/ChatPanel";
 import { RoundEndOverlay } from "./components/RoundEndOverlay";
+import { useReactions } from "@/lib/components/reactions/useReactions";
+import { FloatingEmojis } from "@/lib/components/reactions/FloatingEmojis";
+import type { EmojiType } from "@/lib/components/reactions/types";
 
 export const VotingPage = () => {
   const params = useParams();
@@ -45,6 +48,9 @@ export const VotingPage = () => {
     item: TierItem;
     tier: string;
   } | null>(null);
+
+  // Reactions system
+  const { reactions, sendReaction } = useReactions(id as string);
 
   useEffect(() => {
     voteTiersRef.current = new Map();
@@ -191,6 +197,21 @@ export const VotingPage = () => {
     setRoundTotalSeconds(null);
   };
 
+  const handleReaction = async (emoji: EmojiType) => {
+    if (!user || !id) return;
+    
+    try {
+      await sendReaction(
+        emoji,
+        user.uid,
+        user.displayName || undefined,
+        // Could track round number here if needed
+      );
+    } catch (error) {
+      console.error('Failed to send reaction:', error);
+    }
+  };
+
   const startNext = async () => {
     const unvotedItems = tierList.items.filter((i) => !i.tier);
     const item = randItem(unvotedItems);
@@ -271,8 +292,11 @@ export const VotingPage = () => {
               item={lastCompletedItem.item}
               winningTier={lastCompletedItem.tier}
               show={showRoundEndOverlay}
+              onReaction={handleReaction}
             />
           )}
+          {/* Floating Emoji Reactions */}
+          {reactions.length > 0 && <FloatingEmojis reactions={reactions} />}
         </div>
         {tierList && (
           <div className="mt-4">

@@ -49,6 +49,16 @@ service cloud.firestore {
 					&& request.resource.data.userName is string || request.resource.data.userName == null
 					&& request.resource.data.photoURL is string || request.resource.data.photoURL == null;
 			}
+
+			// Reactions subcollection for emoji reactions
+			match /reactions/{reactionId} {
+				allow read: if isSignedIn();
+				allow create: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','emoji','createdAt'])
+					&& request.resource.data.emoji in ['party', 'poo']
+					&& request.resource.data.userName is string || request.resource.data.userName == null;
+			}
 		}
 
 		// Legacy camel-case parent for existing votes logic
@@ -87,6 +97,16 @@ service cloud.firestore {
 					&& request.resource.data.text.size() > 0
 					&& (request.resource.data.userName is string || request.resource.data.userName == null)
 					&& (request.resource.data.photoURL is string || request.resource.data.photoURL == null);
+			}
+
+			// Reactions subcollection for emoji reactions (legacy camel-case parent)
+			match /reactions/{reactionId} {
+				allow read: if isSignedIn();
+				allow create: if isSignedIn()
+					&& request.resource.data.userId == request.auth.uid
+					&& request.resource.data.keys().hasAll(['userId','emoji','createdAt'])
+					&& request.resource.data.emoji in ['party', 'poo']
+					&& (request.resource.data.userName is string || request.resource.data.userName == null);
 			}
 		}
 
