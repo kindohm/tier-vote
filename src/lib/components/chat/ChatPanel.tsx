@@ -193,35 +193,17 @@ export const ChatPanel = ({ listId }: { listId?: string }) => {
               merged.map((m) => (
                 <div key={m.id} className="d-flex mb-2">
                   <div className="me-2" style={{ width: 36 }}>
-                    {m.photoURL ? (
-                      <img
-                        src={m.photoURL}
-                        alt={m.userName || m.userId}
-                        className="rounded-circle"
-                        style={{ width: 36, height: 36, objectFit: "cover" }}
-                        crossOrigin="anonymous"
-                        onError={(e) => {
-                          console.log("error!");
-                          // Hide the broken image and show initials instead
-                          e.currentTarget.style.display = "none";
-                          const fallback = e.currentTarget
-                            .nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = "flex";
-                        }}
-                      />
-                    ) : (
-                      <div
-                        className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                        style={{
-                          width: 36,
-                          height: 36,
-                          fontSize: 12,
-                          display: m.photoURL ? "none" : "flex",
-                        }}
-                      >
-                        {initials(m.userName || m.userId)}
-                      </div>
-                    )}
+                    <div
+                      className="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                      style={{
+                        width: 36,
+                        height: 36,
+                        fontSize: 12,
+                        display: m.photoURL ? "none" : "flex",
+                      }}
+                    >
+                      {initials(m.userName || m.userId)}
+                    </div>
                   </div>
                   <div style={{ flex: "1 1 auto" }}>
                     <div className="small text-muted mb-1">

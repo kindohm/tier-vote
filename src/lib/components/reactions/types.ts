@@ -1,4 +1,4 @@
-export type EmojiType = 'party' | 'poo';
+export type EmojiType = 'party' | 'poo' | 'sunglasses' | 'sobbing' | 'rofl';
 
 export type Reaction = {
   id: string;
@@ -21,4 +21,9 @@ export type ReactionDoc = {
 export const EMOJI_MAP = {
   party: '🎉',
   poo: '💩',
+  sunglasses: '😎',
+  sobbing: '😭',
+  rofl: '🤣',
 } as const;
+
+export const ALL_EMOJI_TYPES: EmojiType[] = ['party', 'poo', 'sunglasses', 'sobbing', 'rofl'];

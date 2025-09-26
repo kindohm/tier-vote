@@ -43,6 +43,7 @@ export const VotingPage = () => {
   const router = useRouter();
   const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
   const voteTiersRef = useRef<Map<string, string | null>>(new Map());
+  const lastProcessedRoundRef = useRef<string | null>(null);
   const [showRoundEndOverlay, setShowRoundEndOverlay] = useState(false);
   const [lastCompletedItem, setLastCompletedItem] = useState<{
     item: TierItem;
@@ -99,6 +100,29 @@ export const VotingPage = () => {
     }
   }, [votesForCurrentItem, tierList?.currentVoteItemId, tierList?.users]);
 
+  // Watch for completed rounds (when lastVoteItemId changes) and show overlay for all users
+  useEffect(() => {
+    if (!tierList?.lastVoteItemId) return;
+    
+    // Skip if we've already processed this round
+    if (lastProcessedRoundRef.current === tierList.lastVoteItemId) return;
+    
+    // Find the item that was just completed
+    const completedItem = tierList.items.find(
+      (item) => item.id === tierList.lastVoteItemId
+    );
+    
+    if (completedItem && completedItem.tier && !showRoundEndOverlay) {
+      console.log('Detected completed round via Firebase update - showing overlay for item:', completedItem.id, 'tier:', completedItem.tier);
+      lastProcessedRoundRef.current = tierList.lastVoteItemId;
+      setLastCompletedItem({
+        item: completedItem,
+        tier: completedItem.tier,
+      });
+      setShowRoundEndOverlay(true);
+    }
+  }, [tierList?.lastVoteItemId, tierList?.items, showRoundEndOverlay]);
+
   useInterval(() => {
     if (
       tierList?.pendingVoteItemId &&
@@ -153,6 +177,9 @@ export const VotingPage = () => {
   }, 250);
 
   const forceEnd = () => {
+    // Capture the current vote item ID immediately to avoid race conditions
+    const currentVoteItemId = tierList.currentVoteItemId;
+    
     const totals = tierList.tiers
       .map((tier) => {
         const votesFor = votesForCurrentItem.filter(
@@ -162,33 +189,21 @@ export const VotingPage = () => {
       })
       .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
-    // Find the item that was just voted on
-    const votedItem = tierList.items.find(
-      (item) => item.id === tierList.currentVoteItemId
-    );
-
     const newItems = tierList.items.map((i) =>
-      i.id === tierList.currentVoteItemId ? { ...i, tier: totals.tier } : i
+      i.id === currentVoteItemId ? { ...i, tier: totals.tier } : i
     );
 
     const inProgress = !!newItems.find((i) => !i.tier);
     const closed = !inProgress;
 
-    // Show the overlay with the completed item and its tier
-    if (votedItem) {
-      setLastCompletedItem({
-        item: votedItem,
-        tier: totals.tier,
-      });
-      setShowRoundEndOverlay(true);
-    }
+    // Note: Overlay will be shown by useEffect watching lastVoteItemId changes
 
     updateTierList(id as string, {
       ...tierList,
       inProgress,
       closed,
       items: newItems,
-      lastVoteItemId: closed ? null : tierList.currentVoteItemId,
+      lastVoteItemId: closed ? null : currentVoteItemId,
       currentVoteItemId: null,
       itemVotingEndsAt: null,
     });
