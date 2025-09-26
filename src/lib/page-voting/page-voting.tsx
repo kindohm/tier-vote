@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { updateTierList } from "@/lib/data/data";
 import { useVotesForItem, VoteDoc } from "@/lib/data/useVotes";
 import { randItem } from "@/lib/util";
+import { TierItem } from "@/lib/data/types";
 import { Title } from "@/lib/components/Title";
 import { CountdownOverlay } from "@/lib/components/CountdownOverlay";
 import { RoundProgressBar } from "@/lib/components/RoundProgressBar";
@@ -17,6 +18,7 @@ import { VoteToasts, VoteToast } from "./components/VoteToasts";
 import { WaitingStatus } from "@/lib/components/WaitingStatus";
 import { VotingResults } from "@/lib/components/votingResults/VotingResults";
 import { ChatPanel } from "@/lib/components/chat/ChatPanel";
+import { RoundEndOverlay } from "./components/RoundEndOverlay";
 
 export const VotingPage = () => {
   const params = useParams();
@@ -38,10 +40,36 @@ export const VotingPage = () => {
   const router = useRouter();
   const [voteToasts, setVoteToasts] = useState<VoteToast[]>([]);
   const voteTiersRef = useRef<Map<string, string | null>>(new Map());
+  const [showRoundEndOverlay, setShowRoundEndOverlay] = useState(false);
+  const [lastCompletedItem, setLastCompletedItem] = useState<{
+    item: TierItem;
+    tier: string;
+  } | null>(null);
 
   useEffect(() => {
     voteTiersRef.current = new Map();
   }, [tierList?.currentVoteItemId]);
+
+  // Hide the round end overlay when a new round countdown starts
+  useEffect(() => {
+    if (tierList?.pendingVoteItemId && showRoundEndOverlay) {
+      setShowRoundEndOverlay(false);
+      setLastCompletedItem(null);
+    }
+  }, [tierList?.pendingVoteItemId, showRoundEndOverlay]);
+
+  // Handle redirect when voting is complete
+  useEffect(() => {
+    if (tierList && !tierList.inProgress && tierList.closed) {
+      const delay = showRoundEndOverlay ? 4000 : 1000;
+      const timer = setTimeout(() => {
+        console.log("Redirecting to /tierlists/" + tierList.id);
+        router.push(`/tierlists/${tierList.id}`);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [tierList, showRoundEndOverlay, router]);
 
   useEffect(() => {
     if (!tierList?.currentVoteItemId) return;
@@ -128,12 +156,26 @@ export const VotingPage = () => {
       })
       .sort((a, b) => (a.votesFor > b.votesFor ? -1 : 1))[0];
 
+    // Find the item that was just voted on
+    const votedItem = tierList.items.find(
+      (item) => item.id === tierList.currentVoteItemId
+    );
+
     const newItems = tierList.items.map((i) =>
       i.id === tierList.currentVoteItemId ? { ...i, tier: totals.tier } : i
     );
 
     const inProgress = !!newItems.find((i) => !i.tier);
     const closed = !inProgress;
+
+    // Show the overlay with the completed item and its tier
+    if (votedItem) {
+      setLastCompletedItem({
+        item: votedItem,
+        tier: totals.tier,
+      });
+      setShowRoundEndOverlay(true);
+    }
 
     updateTierList(id as string, {
       ...tierList,
@@ -148,12 +190,6 @@ export const VotingPage = () => {
     setSecondsLeft(0);
     setRoundTotalSeconds(null);
   };
-
-  if (tierList && !tierList?.inProgress) {
-    setTimeout(() => {
-      router.push(`/tierlists/${tierList.id}`);
-    }, 1000);
-  }
 
   const startNext = async () => {
     const unvotedItems = tierList.items.filter((i) => !i.tier);
@@ -228,6 +264,14 @@ export const VotingPage = () => {
           <Board tierList={tierList} />
           {tierList?.pendingVoteItemId && secondsUntilStart !== null && (
             <CountdownOverlay seconds={secondsUntilStart} />
+          )}
+          {/* Round End Overlay */}
+          {showRoundEndOverlay && lastCompletedItem && (
+            <RoundEndOverlay
+              item={lastCompletedItem.item}
+              winningTier={lastCompletedItem.tier}
+              show={showRoundEndOverlay}
+            />
           )}
         </div>
         {tierList && (
